@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Migrating from Open API (Swagger) Editor for Confluence (EliteSoft) to OpenAPI Viewer | OpenAPI Swagger Viewer for Confluence</title>
+<meta name="description" content="Move pages from Open API (Swagger) Editor for Confluence (EliteSoft) to OpenAPI Viewer: feature map, five steps, what changes.">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../site.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header"><div class="wrap">
+<a class="brand" href="../../index.html">OpenAPI Swagger Viewer for Confluence</a>
+<nav class="site-nav" aria-label="Main"><ul><li><a href="../../docs/index.html">Docs</a></li><li><a href="../../docs/migrating/index.html" aria-current="page">Migrating</a></li><li><a href="../../privacy.html">Privacy</a></li><li><a href="../../eula.html">EULA</a></li><li><a href="../../support.html">Support</a></li></ul></nav>
+</div></header>
+<main id="main"><div class="wrap">
+<div class="prose">
+<nav aria-label="Breadcrumb" class="crumbs"><a href="../../docs/index.html">Documentation</a> / <a href="../../docs/migrating/index.html">Migrating</a> / <span aria-current="page">Open API (Swagger) Editor (EliteSoft)</span></nav>
+<nav aria-label="Documentation"><ul class="docs-nav"><li><a href="../../docs/index.html">Overview</a></li><li><a href="../../docs/quick-start.html">Quick start</a></li><li><a href="../../docs/attachment-mode.html">Attachment mode</a></li><li><a href="../../docs/ci-push.html">CI push</a></li><li><a href="../../docs/troubleshooting.html">Troubleshooting</a></li><li><a href="../../docs/faq.html">FAQ</a></li><li><a href="../../docs/migrating/index.html">Migrating</a></li></ul></nav>
+<h1 id="migrating-from-open-api-swagger-editor-for-confluence-elitesoft-to-openapi-viewer">Migrating from Open API (Swagger) Editor for Confluence (EliteSoft) to OpenAPI Viewer</h1>
+<p>If your Confluence Cloud pages render an OpenAPI or Swagger spec with <strong>Open API (Swagger) Editor for Confluence</strong> by EliteSoft, this guide moves them to OpenAPI Viewer, an app built on Atlassian Forge and designed to be <strong>Runs on Atlassian</strong>: nothing leaves Atlassian and no credentials are stored. One thing to decide first: the old app is a viewer and an editor, and OpenAPI Viewer is a viewer only.</p>
+<p>Facts about the old app were checked on 13 October 2026 against its Marketplace listing and vendor documentation.</p>
+<h2 id="why-migrate-now">Why migrate now</h2>
+<p>Atlassian ends support for the Connect framework on <strong>31 January 2027</strong>, and warns that breakages will increase afterwards. Since July 2026, Confluence admins have seen a banner on apps that still run on Connect, saying the platform will be unsupported after that date.</p>
+<p>The Confluence Cloud edition is a Connect app (version 1.0.17-AC, released 25 September 2024), and its listing shows no Forge version. Newer 4.x releases on the listing are for Data Center and Server.</p>
+<h2 id="feature-map">Feature map</h2>
+<div class="table-wrap" role="region" aria-label="Table" tabindex="0">
+<table>
+<thead><tr><th scope="col">Open API (Swagger) Editor for Confluence</th><th scope="col">OpenAPI Viewer</th><th scope="col">Status</th></tr></thead>
+<tbody>
+<tr><td>Viewer macro that renders interactive documentation</td><td>Viewer macro, Swagger UI-compatible renderer bundled in the app</td><td>Same</td></tr>
+<tr><td>Supported OpenAPI versions (not stated on listing)</td><td>OpenAPI 2.0, 3.0.x, 3.1</td><td>Same or wider</td></tr>
+<tr><td>Spec pasted in macro body</td><td>Paste source, up to about 150 KB</td><td>Same</td></tr>
+<tr><td>Spec from a hosted URL entered in the macro</td><td>Not supported</td><td>Not in v1. Workaround: <a href="../ci-push.html">CI push</a></td></tr>
+<tr><td>Spec as page attachment</td><td>Attachment source: pick from a list, "always latest" or pinned</td><td>Not documented for old app; ours: yes</td></tr>
+<tr><td>Git hosting (Bitbucket, GitLab, GitHub)</td><td>Not supported</td><td>Not in v1. Workaround: <a href="../ci-push.html">CI push</a></td></tr>
+<tr><td>"Try it out" while composing and viewing</td><td>Not supported</td><td>Not in v1. Workaround: Postman, curl or your gateway console</td></tr>
+<tr><td>Built-in editor (open from your profile menu; export to JSON or YAML)</td><td>None</td><td>Not in v1. Workaround: edit in your repo or IDE, or in the Swagger Editor in a browser</td></tr>
+<tr><td>Search, expand/collapse, deep links, full-screen, auto-height, dark mode</td><td>Included</td><td>Not documented for old app; ours: yes</td></tr>
+<tr><td>Price: from USD 10/year at 10 users; USD 150 at 100; USD 425 at 500</td><td>Free up to 10 users, then paid by user tier</td><td>Different</td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="five-steps">Five steps</h2>
+<ol>
+<li><strong>Export every spec, including the ones in the editor.</strong> For a pasted spec, open the old macro and copy the body into <code>openapi.yaml</code>. For a URL, download the file. Then open the old editor from your profile menu and export each definition you still maintain as YAML or JSON. Where the editor keeps definitions is not documented, so do not assume the macro body has the latest copy.</li>
+<li><strong>Move the source of truth into your repo.</strong> OpenAPI Viewer does not edit specs, so each spec should live in a Git repository or a shared folder. Commit the exported files there. A spec under about 150 KB can be pasted into the new macro; a larger one is attached to the page. To update the page on every merge, add the pipeline from <a href="../ci-push.html">Push your spec from CI</a>; ready-made pipelines are on that page.</li>
+<li><strong>Install OpenAPI Viewer and replace the macro.</strong> Install it beside the old app (30-day trial). On each page add the new macro, choose <strong>Paste</strong> or <strong>Attachment</strong>, then delete the old macro. See the <a href="../quick-start.html">quick start</a> and <a href="../attachment-mode.html">attachment mode</a>.</li>
+<li><strong>Verify.</strong> Reload as a normal reader. Check paths, schemas, deep links and dark mode, and compare your busiest page with the old rendering.</li>
+<li><strong>Delete the old app.</strong> Once every page and every exported definition is confirmed, uninstall the old app well before 31 January 2027.</li>
+</ol>
+<h2 id="what-you-lose-and-why">What you lose, and why</h2>
+<ul>
+<li><strong>The editor.</strong> Version 1 is a viewer only, and writing specs is a different job. A spec in Git, edited in your IDE and reviewed in pull requests, then pushed to the page, gives you history and review that a macro editor does not.</li>
+<li><strong>Try it out.</strong> Live requests need external permissions on Forge, and an app with external permissions cannot be Runs on Atlassian. See the <a href="../faq.html">FAQ</a>.</li>
+<li><strong>URL and Git fetch.</strong> Fetching is outbound traffic, which Runs on Atlassian does not allow. With the push model, your pipeline uploads the spec using your own Confluence token, kept in your CI secret store. The app never reaches your repository and never holds a credential.</li>
+</ul>
+<nav class="pager" aria-label="Previous and next page"><span>&larr; <a href="index.html">Migration overview</a></span><span></span></nav>
+</div>
+</div></main>
+<footer class="site-footer"><div class="wrap">
+<ul><li><a href="../../index.html">Home</a></li><li><a href="../../docs/index.html">Documentation</a></li><li><a href="../../privacy.html">Privacy Policy</a></li><li><a href="../../eula.html">End User License Agreement</a></li><li><a href="../../support.html">Support</a></li></ul>
+<p>Not affiliated with Atlassian; Atlassian, Confluence and Marketplace are trademarks of Atlassian Pty Ltd.</p>
+<p>Swagger is a trademark of SmartBear Software. This app is not affiliated with or endorsed by SmartBear.</p>
+<p>&copy; [VENDOR LEGAL NAME]</p>
+</div></footer>
+</body>
+</html>

@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Privacy Policy | OpenAPI Swagger Viewer for Confluence</title>
+<meta name="description" content="Privacy Policy for OpenAPI Swagger Viewer for Confluence: what data is processed, where it lives, retention and your rights.">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="site.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header"><div class="wrap">
+<a class="brand" href="index.html">OpenAPI Swagger Viewer for Confluence</a>
+<nav class="site-nav" aria-label="Main"><ul><li><a href="docs/index.html">Docs</a></li><li><a href="docs/migrating/index.html">Migrating</a></li><li><a href="privacy.html" aria-current="page">Privacy</a></li><li><a href="eula.html">EULA</a></li><li><a href="support.html">Support</a></li></ul></nav>
+</div></header>
+<main id="main"><div class="wrap">
+<div class="prose">
+<h1 id="privacy-policy-openapi-swagger-viewer-for-confluence">Privacy Policy: OpenAPI Swagger Viewer for Confluence</h1>
+<p><strong>Effective date:</strong> [EFFECTIVE DATE]<br>
+<strong>Vendor:</strong> [VENDOR LEGAL NAME], [REGISTERED ADDRESS], [JURISDICTION] ("we", "us")<br>
+<strong>Contact for privacy questions and security reports:</strong> <a href="mailto:support@[DOMAIN]">support@[DOMAIN]</a></p>
+<h2 id="1-the-short-version">1. The short version</h2>
+<ul>
+<li>The app shows OpenAPI/Swagger specs inside Confluence Cloud. It runs on Atlassian's Forge platform and is designed to <strong>Run on Atlassian</strong>: it makes no outbound network requests and declares no external permissions.</li>
+<li>Your specs, page content and attachments are read <strong>in your own browser</strong> from your own Confluence site. They are <strong>not sent to us</strong>, and not to anyone else.</li>
+<li>We do not store passwords, API tokens or any other credentials. We do not use analytics, advertising or tracking tools inside the app.</li>
+<li>The only app data we or the app keep is: the macro settings you enter, and small anonymous error counters, both held in Atlassian's Forge storage for your site.</li>
+<li>We receive the usual customer and licence information from Atlassian Marketplace (who bought what, for which site), and the emails you send us for support.</li>
+<li>We have no sub-processors. Atlassian hosts the app and its data.</li>
+</ul>
+<h2 id="2-who-is-responsible-for-what">2. Who is responsible for what</h2>
+<ul>
+<li><strong>Your content</strong> (specs, page text, attachments, macro settings): you are the controller of this data. Because it stays on Atlassian's infrastructure and never reaches our own systems, we do not hold a copy. To the limited extent that running the app processes it on your behalf, we act as your processor and will sign a data processing agreement on request (<a href="mailto:support@[DOMAIN]">support@[DOMAIN]</a>).</li>
+<li><strong>Business and support data</strong> (Marketplace licence information, support emails): we are the controller.</li>
+<li><strong>Atlassian</strong> operates Confluence, Forge hosting and storage, and Marketplace billing. Atlassian's own privacy policy and terms apply to that processing: <a href="https://www.atlassian.com/legal/privacy-policy" rel="noopener noreferrer">https://www.atlassian.com/legal/privacy-policy</a></li>
+</ul>
+<h2 id="3-what-data-is-involved-precisely">3. What data is involved, precisely</h2>
+<h3 id="31-data-processed-inside-your-confluence-site-the-app-itself">3.1 Data processed inside your Confluence site (the app itself)</h3>
+<div class="table-wrap" role="region" aria-label="Table" tabindex="0">
+<table>
+<thead><tr><th scope="col">Data</th><th scope="col">What it is</th><th scope="col">Where it lives</th><th scope="col">Do we receive it?</th></tr></thead>
+<tbody>
+<tr><td><strong>Macro configuration</strong></td><td>Source mode (paste or attachment), the pasted spec text if you chose paste, the selected attachment and version, display options</td><td>In the Confluence page's macro configuration, and where needed in Forge hosted storage for your site</td><td>No. It stays in Atlassian.</td></tr>
+<tr><td><strong>Attachment content</strong></td><td>The .yaml/.yml/.json file attached to the page</td><td>Stored by Confluence as a normal attachment</td><td>No. The app reads it with the viewing user's own permissions through the Confluence API, <strong>in that user's browser</strong>, and renders it there. It is never transmitted to us or to any third party.</td></tr>
+<tr><td><strong>Anonymous error events</strong></td><td>One log line per render with a fixed category (for example <code>parse_error</code>, <code>download_error</code>, <code>ok</code>) and a size bucket (for example "1&ndash;5 MB"). They contain <strong>no spec content, no file or page names, no user identifiers and no IP addresses</strong></td><td>Atlassian Forge application logs (inside Atlassian&rsquo;s infrastructure, subject to Atlassian&rsquo;s retention)</td><td>Yes &mdash; we can read these category-only lines through Atlassian&rsquo;s Forge developer tooling to measure error rates. Nothing else leaves your site.</td></tr>
+<tr><td><strong>Forge diagnostic logs</strong></td><td>Technical error entries written by the app when something fails (error type, app version, time, installation identifier)</td><td>Atlassian's Forge logging; visible to us as the developer</td><td>Yes, but the app is written not to log spec content, tokens or personal data. We use them only to fix bugs.</td></tr>
+</tbody>
+</table>
+</div>
+<p>The only permission the app asks Atlassian for is <code>read:attachment:confluence</code> (read attachments of the pages a user can already see). It uses no Forge storage, does not write to your pages or attachments and requests no external domains.</p>
+<h3 id="32-data-we-receive-as-the-vendor">3.2 Data we receive as the vendor</h3>
+<div class="table-wrap" role="region" aria-label="Table" tabindex="0">
+<table>
+<thead><tr><th scope="col">Data</th><th scope="col">Source</th><th scope="col">Why</th><th scope="col">Legal basis (GDPR)</th></tr></thead>
+<tbody>
+<tr><td><strong>Licence and transaction information</strong>: site URL or identifier, app version, licence type and user tier, dates, and the technical and billing contact names, emails and company that you gave Atlassian</td><td>Atlassian Marketplace</td><td>To provide and support the app, keep licence records, handle tax and accounting</td><td>Contract; legal obligation</td></tr>
+<tr><td><strong>Support correspondence</strong>: your name, email, anything you write, and attachments you send</td><td>You, by email</td><td>To answer you and fix problems</td><td>Legitimate interests (running support); contract</td></tr>
+<tr><td><strong>Optional feedback or review responses</strong></td><td>You</td><td>To improve the product</td><td>Legitimate interests</td></tr>
+</tbody>
+</table>
+</div>
+<p>We ask you <strong>never to send API tokens, passwords or confidential specs</strong> by email. If you need us to look at a spec, send a minimal anonymised example.</p>
+<h3 id="33-what-we-do-not-collect">3.3 What we do not collect</h3>
+<ul>
+<li>Passwords, API tokens, OAuth tokens or any credentials (your CI pipeline uses your own Confluence token against Atlassian directly; it never passes through the app or through us).</li>
+<li>The content of your pages, spreadsheets, specs or attachments.</li>
+<li>Analytics, usage tracking, fingerprinting, advertising identifiers or third-party tracking scripts. The app sets no cookies.</li>
+<li>Sensitive categories of personal data. Please do not put personal data into specs; they are meant to describe APIs.</li>
+</ul>
+<h2 id="4-how-we-use-data">4. How we use data</h2>
+<p>To run, secure, support and bill the app; to fix errors; to meet legal obligations; to communicate about outages, security issues and changes to these terms. We do not sell personal data, do not use it for advertising, and do not use it to train AI models.</p>
+<h2 id="5-where-data-is-stored-and-who-can-see-it">5. Where data is stored and who can see it</h2>
+<ul>
+<li>App data (3.1) is stored by Atlassian in Forge hosted storage and follows the <strong>data residency</strong> of your Confluence site. We do not move it elsewhere.</li>
+<li>Licence and support data (3.2) is held on [OUR SYSTEMS] and may be accessed from [JURISDICTION] and other countries where our team works.</li>
+<li>Only people at [VENDOR LEGAL NAME] who need it for support (currently [N] people, bound by confidentiality) can see licence and support data.</li>
+</ul>
+<h2 id="6-sub-processors-and-third-parties">6. Sub-processors and third parties</h2>
+<ul>
+<li><strong>For the app and your content: none.</strong> All processing happens on Atlassian infrastructure (as host) and in your browser.</li>
+<li>For our own business records we use ordinary tools such as an email provider and an accounting or bookkeeping tool. They only ever see licence and support data, never your content: [SUB-PROCESSOR NAMES AND COUNTRIES].</li>
+<li>We disclose data to authorities only when legally required.</li>
+</ul>
+<h2 id="7-how-long-we-keep-data">7. How long we keep data</h2>
+<div class="table-wrap" role="region" aria-label="Table" tabindex="0">
+<table>
+<thead><tr><th scope="col">Data</th><th scope="col">Retention</th></tr></thead>
+<tbody>
+<tr><td>Macro configuration</td><td>While the app is installed and the macro is on the page. The pasted spec in a macro is part of your page; removing the macro or page removes it.</td></tr>
+<tr><td>Error counters</td><td>Rolling [90] days, then deleted</td></tr>
+<tr><td>Forge diagnostic logs</td><td>As long as Atlassian keeps Forge logs (currently short-lived; see Atlassian documentation)</td></tr>
+<tr><td>Licence and transaction records</td><td>As long as needed for tax and accounting law: [N] years</td></tr>
+<tr><td>Support emails</td><td>[24] months after the last message, then deleted</td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="8-uninstalling-and-deleting-data">8. Uninstalling and deleting data</h2>
+<ul>
+<li><strong>If you uninstall the app</strong>, Atlassian soft-deletes the app's Forge storage for your site and permanently removes it after Atlassian's retention period. Atlassian's current documentation describes this period as 28 days after uninstall, with the possibility to relink data if you reinstall within 21 days. We cannot shorten or extend it.</li>
+<li>Macro settings that sit inside Confluence pages stay in those pages until you delete the macro or the page. They belong to your Confluence content.</li>
+<li>Attachments belong to your pages and are not removed by uninstalling the app.</li>
+<li><strong>To delete licence or support data we hold about you</strong>, email <a href="mailto:support@[DOMAIN]">support@[DOMAIN]</a>. We will do it unless the law requires us to keep it (for example invoice records), and tell you which parts we kept and why.</li>
+</ul>
+<h2 id="9-your-rights-gdpr-uk-gdpr-and-similar-laws">9. Your rights (GDPR, UK GDPR and similar laws)</h2>
+<p>You can ask us to: access your personal data, correct it, delete it, restrict or object to processing, and receive it in a portable format. You can withdraw any consent at any time. Email <a href="mailto:support@[DOMAIN]">support@[DOMAIN]</a>; we respond within 30 days. You can also complain to your local data protection authority.</p>
+<p>If you are a customer and your own users or data subjects contact us about content in your Confluence site, we will direct them to you, because you are the controller of that content and we do not hold it.</p>
+<h2 id="10-international-transfers">10. International transfers</h2>
+<p>We are based in [JURISDICTION]. Licence data reaches us from Atlassian, and support emails from you, possibly from outside our country. Where required, transfers rely on [Standard Contractual Clauses / adequacy decision]. Atlassian's own transfers are described in its policies. Your app data does not leave the Atlassian infrastructure that hosts your site.</p>
+<h2 id="11-security">11. Security</h2>
+<ul>
+<li>The app Runs on Atlassian: it holds no credentials, calls no external hosts and has no backend of ours that stores your data.</li>
+<li>We keep dependencies patched and scanned, log no sensitive data, and limit access to licence and support data to the people who need it.</li>
+<li>Please report vulnerabilities to <a href="mailto:support@[DOMAIN]">support@[DOMAIN]</a> (subject "SECURITY"). We acknowledge within one business day.</li>
+<li>If we learn of a personal data breach affecting our data, we notify affected customers without undue delay and authorities within 72 hours where the law requires it.</li>
+</ul>
+<h2 id="12-children">12. Children</h2>
+<p>The app is a developer tool for workplace use. It is not directed at children, and we do not knowingly collect their data.</p>
+<h2 id="13-california-and-other-us-states">13. California and other US states</h2>
+<p>We do not sell or share personal information as those terms are defined in US state privacy laws, and we do not use it for targeted advertising. You may exercise access and deletion rights via <a href="mailto:support@[DOMAIN]">support@[DOMAIN]</a>.</p>
+<h2 id="14-changes">14. Changes</h2>
+<p>We will update this policy when the app's data handling changes (for example if we add a feature that stores new data) and change the effective date above. For material changes we will update the Marketplace listing's Privacy and Security tab and notify administrators by email where we have a contact.</p>
+<h2 id="15-contact">15. Contact</h2>
+<p>[VENDOR LEGAL NAME] · [REGISTERED ADDRESS] · <a href="mailto:support@[DOMAIN]">support@[DOMAIN]</a></p>
+</div>
+</div></main>
+<footer class="site-footer"><div class="wrap">
+<ul><li><a href="index.html">Home</a></li><li><a href="docs/index.html">Documentation</a></li><li><a href="privacy.html">Privacy Policy</a></li><li><a href="eula.html">End User License Agreement</a></li><li><a href="support.html">Support</a></li></ul>
+<p>Not affiliated with Atlassian; Atlassian, Confluence and Marketplace are trademarks of Atlassian Pty Ltd.</p>
+<p>Swagger is a trademark of SmartBear Software. This app is not affiliated with or endorsed by SmartBear.</p>
+<p>&copy; [VENDOR LEGAL NAME]</p>
+</div></footer>
+</body>
+</html>

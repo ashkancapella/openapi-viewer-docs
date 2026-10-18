@@ -1,0 +1,376 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Push your spec from CI | OpenAPI Swagger Viewer for Confluence</title>
+<meta name="description" content="Push your OpenAPI spec from CI to a Confluence page attachment with your own token. Works for private repositories; the app stores no credentials.">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../site.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header"><div class="wrap">
+<a class="brand" href="../index.html">OpenAPI Swagger Viewer for Confluence</a>
+<nav class="site-nav" aria-label="Main"><ul><li><a href="../docs/index.html" aria-current="page">Docs</a></li><li><a href="../docs/migrating/index.html">Migrating</a></li><li><a href="../privacy.html">Privacy</a></li><li><a href="../eula.html">EULA</a></li><li><a href="../support.html">Support</a></li></ul></nav>
+</div></header>
+<main id="main"><div class="wrap">
+<div class="prose">
+<nav aria-label="Breadcrumb" class="crumbs"><a href="../docs/index.html">Documentation</a> / <span aria-current="page">CI push</span></nav>
+<nav aria-label="Documentation"><ul class="docs-nav"><li><a href="../docs/index.html">Overview</a></li><li><a href="../docs/quick-start.html">Quick start</a></li><li><a href="../docs/attachment-mode.html">Attachment mode</a></li><li><a href="../docs/ci-push.html" aria-current="page">CI push</a></li><li><a href="../docs/troubleshooting.html">Troubleshooting</a></li><li><a href="../docs/faq.html">FAQ</a></li><li><a href="../docs/migrating/index.html">Migrating</a></li></ul></nav>
+<h1 id="push-your-spec-from-ci">Push your spec from CI</h1>
+<p><strong>The push model in short:</strong> your CI pipeline uploads the OpenAPI file to a Confluence page as an attachment, using your own Confluence API token. The OpenAPI Viewer macro, set to "always latest", renders whatever is attached. The app never connects to your repository and never stores a token or any other credential, which makes it work for private repositories and keeps it Runs on Atlassian.</p>
+<h2 id="prerequisites">Prerequisites</h2>
+<ol>
+<li><strong>A Confluence page with the macro.</strong> Create the page, add the OpenAPI Viewer macro, set <strong>Source</strong> to <strong>Attachment</strong>, and choose <strong>Always latest</strong>. Do the first upload by hand or with the call below, then select the file.</li>
+<li><strong>The page ID.</strong> Open the page. The URL looks like <code>https://your-site.atlassian.net/wiki/spaces/ENG/pages/123456789/API+Reference</code>. The number after <code>/pages/</code> is the page ID.</li>
+<li><strong>An Atlassian API token</strong> created by the account that will perform the upload. Create it at <code>https://id.atlassian.com/manage-profile/security/api-tokens</code>. Store it only as a masked secret in your CI system, never in the repository. Tokens expire, so rotate before the expiry date.</li>
+<li><strong>Permission.</strong> That account must be able to add attachments to the page (edit access to the page and the space's attachment permission). Use a dedicated service account so uploads survive staff changes.</li>
+</ol>
+<p><strong>A note on scoped tokens.</strong> Atlassian also offers scoped API tokens. These need Confluence scopes that cover writing attachments and are generally used through the <code>api.atlassian.com</code> gateway rather than your site URL. We have not verified the call below with scoped tokens, so the examples use a standard API token against your site URL.</p>
+<h2 id="the-rest-call">The REST call</h2>
+<pre><code>curl --request PUT \
+  --user "you@example.com:$CONFLUENCE_API_TOKEN" \
+  --header "X-Atlassian-Token: nocheck" \
+  --form "file=@openapi.yaml" \
+  --form "minorEdit=true" \
+  --form-string "comment=Updated from CI" \
+  "https://your-site.atlassian.net/wiki/rest/api/content/123456789/child/attachment"</code></pre>
+<ul>
+<li><strong>Method and path:</strong> <code>PUT /wiki/rest/api/content/{pageId}/child/attachment</code></li>
+<li><strong>Authentication:</strong> HTTP Basic, with your Atlassian account email as the user name and the API token as the password.</li>
+<li><strong><code>X-Atlassian-Token: nocheck</code>:</strong> required. Without it Confluence rejects the upload with an XSRF error.</li>
+<li><strong>Body:</strong> <code>multipart/form-data</code> with a <code>file</code> part. <code>minorEdit=true</code> suppresses watcher notifications, and <code>comment</code> appears in the version history.</li>
+</ul>
+<h3 id="create-or-update-by-file-name">Create or update, by file name</h3>
+<p><code>PUT</code> on this endpoint means "create or update". If the page has no attachment with the same file name, one is created. If it has, the upload becomes a <strong>new version</strong> of that attachment, and nothing else on the page changes. Readers of an <strong>Always latest</strong> macro see it on their next page load. Keep the file name identical on every run, because a different name creates a second attachment.</p>
+<h3 id="a-note-on-api-versions">A note on API versions</h3>
+<p>As far as we know, the Confluence Cloud v2 REST API does not offer an endpoint to upload attachments, and the v1 endpoint above is the documented, stable way to do it. Atlassian is moving other endpoints to v2, so check the Confluence Cloud REST documentation for changes. We will update this page if a v2 upload endpoint appears.</p>
+<h2 id="ready-made-pipelines">Ready-made pipelines</h2>
+<p>Copy-paste pipelines for GitHub Actions, GitLab CI, Bitbucket Pipelines, and plain shell are below. Each fails the job on a non-2xx response and never prints the token.</p>
+<ul>
+<li><a href="#github-actions">GitHub Actions</a></li>
+<li><a href="#gitlab-ci">GitLab CI</a></li>
+<li><a href="#bitbucket-pipelines">Bitbucket Pipelines</a></li>
+<li><a href="#curl">curl (any other CI, or your laptop)</a></li>
+</ul>
+<p>All four make the same call: <code>PUT {CONFLUENCE_BASE_URL}/wiki/rest/api/content/{PAGE_ID}/child/attachment</code> with a multipart <code>file</code>, <code>minorEdit=true</code>, a comment, and the header <code>X-Atlassian-Token: nocheck</code>. PUT creates the attachment, or adds a new version if the page already has an attachment with the same file name.</p>
+<h3 id="variables">Variables</h3>
+<div class="table-wrap" role="region" aria-label="Table" tabindex="0">
+<table>
+<thead><tr><th scope="col">Variable</th><th scope="col">Kind</th><th scope="col">Example</th><th scope="col">Notes</th></tr></thead>
+<tbody>
+<tr><td><code>CONFLUENCE_BASE_URL</code></td><td>secret</td><td><code>https://your-site.atlassian.net</code></td><td>Site URL without <code>/wiki</code> and without a trailing path</td></tr>
+<tr><td><code>CONFLUENCE_EMAIL</code></td><td>secret</td><td><code>ci-bot@example.com</code></td><td>Email of the Atlassian account that owns the token</td></tr>
+<tr><td><code>CONFLUENCE_API_TOKEN</code></td><td>secret (masked)</td><td>(never in the repo)</td><td>Create at id.atlassian.com &gt; Security &gt; API tokens. Tokens expire; rotate before expiry</td></tr>
+<tr><td><code>PAGE_ID</code></td><td>plain</td><td><code>123456789</code></td><td>The number after <code>/pages/</code> in the page URL</td></tr>
+<tr><td><code>SPEC_PATH</code></td><td>plain</td><td><code>openapi/openapi.yaml</code></td><td>Path to the spec in the repo (<code>.yaml</code>, <code>.yml</code>, or <code>.json</code>)</td></tr>
+<tr><td><code>ATTACHMENT_NAME</code></td><td>optional</td><td><code>openapi.yaml</code></td><td>File name on the page. Defaults to the basename of <code>SPEC_PATH</code>. Keep it constant</td></tr>
+<tr><td><code>COMMENT</code></td><td>optional</td><td><code>Updated from CI</code></td><td>Version comment (the pipeline snippets add the commit SHA)</td></tr>
+</tbody>
+</table>
+</div>
+<p>Set the three secrets in your CI system's secret store (GitHub: repository secrets; GitLab: masked CI/CD variables; Bitbucket: secured repository variables). <code>PAGE_ID</code> and <code>SPEC_PATH</code> are set in the snippet itself; change them before use. The <code>paths</code>/<code>changes</code>/<code>includePaths</code> filter in each pipeline must match your <code>SPEC_PATH</code>.</p>
+<h3 id="pipeline-before-you-start">Before you start</h3>
+<ol>
+<li>Create the Confluence page, add the OpenAPI Viewer macro, choose Source = Attachment and "Always latest".</li>
+<li>Use a dedicated service account for the token. It needs permission to add attachments to that page.</li>
+<li>Run the pipeline once and confirm the attachment version increases on the page.</li>
+</ol>
+<h3 id="snippets">The pipelines</h3>
+<h4 id="github-actions">GitHub Actions</h4>
+<div class="code-block">
+<div class="code-head"><span>.github/workflows/publish-openapi-to-confluence.yml</span><button type="button" class="copy-btn" data-copy="snip-github" hidden>Copy</button></div>
+<pre id="snip-github" tabindex="0"><code># .github/workflows/publish-openapi-to-confluence.yml
+#
+# Uploads the OpenAPI spec to a Confluence page whenever it changes on main.
+# Repository secrets to create (Settings &gt; Secrets and variables &gt; Actions):
+#   CONFLUENCE_BASE_URL   e.g. https://your-site.atlassian.net   (no /wiki)
+#   CONFLUENCE_EMAIL
+#   CONFLUENCE_API_TOKEN
+name: Publish OpenAPI spec to Confluence
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - openapi/openapi.yaml   # keep in sync with SPEC_PATH below
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: publish-openapi-to-confluence
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Upload spec as Confluence attachment
+        env:
+          CONFLUENCE_BASE_URL: ${{ secrets.CONFLUENCE_BASE_URL }}
+          CONFLUENCE_EMAIL: ${{ secrets.CONFLUENCE_EMAIL }}
+          CONFLUENCE_API_TOKEN: ${{ secrets.CONFLUENCE_API_TOKEN }}
+          PAGE_ID: &quot;123456789&quot;                 # &lt;- your page ID
+          SPEC_PATH: openapi/openapi.yaml      # &lt;- path in the repo
+          COMMENT: &quot;Updated from GitHub Actions (${{ github.sha }})&quot;
+        run: |
+          set -eu
+          NAME=&quot;${ATTACHMENT_NAME:-$(basename &quot;$SPEC_PATH&quot;)}&quot;
+          RESPONSE_FILE=&quot;$(mktemp)&quot;
+          # Credentials are passed to curl on stdin so they never appear in
+          # the process list. GitHub also masks secrets in logs.
+          HTTP_CODE=&quot;$(
+            printf &#x27;user = &quot;%s:%s&quot;\n&#x27; &quot;$CONFLUENCE_EMAIL&quot; &quot;$CONFLUENCE_API_TOKEN&quot; |
+            curl --silent --show-error --config - \
+              --request PUT \
+              --header &#x27;X-Atlassian-Token: nocheck&#x27; \
+              --form &quot;file=@${SPEC_PATH};filename=${NAME}&quot; \
+              --form &#x27;minorEdit=true&#x27; \
+              --form-string &quot;comment=${COMMENT}&quot; \
+              --output &quot;$RESPONSE_FILE&quot; \
+              --write-out &#x27;%{http_code}&#x27; \
+              &quot;${CONFLUENCE_BASE_URL%/}/wiki/rest/api/content/${PAGE_ID}/child/attachment&quot;
+          )&quot;
+          case &quot;$HTTP_CODE&quot; in
+            2??) echo &quot;Uploaded ${NAME} to page ${PAGE_ID} (HTTP ${HTTP_CODE}).&quot; ;;
+            *)   echo &quot;Upload failed: HTTP ${HTTP_CODE}&quot; &gt;&amp;2; cat &quot;$RESPONSE_FILE&quot; &gt;&amp;2; exit 1 ;;
+          esac</code></pre>
+</div>
+<h4 id="gitlab-ci">GitLab CI</h4>
+<div class="code-block">
+<div class="code-head"><span>.gitlab-ci.yml (add this job)</span><button type="button" class="copy-btn" data-copy="snip-gitlab" hidden>Copy</button></div>
+<pre id="snip-gitlab" tabindex="0"><code># .gitlab-ci.yml (add this job to your pipeline)
+#
+# Uploads the OpenAPI spec to a Confluence page whenever it changes on the
+# default branch.
+# CI/CD variables to create (Settings &gt; CI/CD &gt; Variables), all &quot;Masked&quot;
+# and, if you can, &quot;Protected&quot;:
+#   CONFLUENCE_BASE_URL   e.g. https://your-site.atlassian.net   (no /wiki)
+#   CONFLUENCE_EMAIL
+#   CONFLUENCE_API_TOKEN
+#   PAGE_ID               numeric Confluence page ID
+# GitLab only masks values of 8+ characters with no spaces; the API token
+# qualifies. Do not enable `set -x` or `CI_DEBUG_TRACE`, which would print it.
+
+publish-openapi-to-confluence:
+  stage: deploy
+  image:
+    name: curlimages/curl:8.10.1
+    entrypoint: [&quot;&quot;]
+  variables:
+    SPEC_PATH: openapi/openapi.yaml        # &lt;- path in the repo
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      changes:
+        - openapi/openapi.yaml             # keep in sync with SPEC_PATH
+  script:
+    - |
+      set -eu
+      NAME=&quot;${ATTACHMENT_NAME:-$(basename &quot;$SPEC_PATH&quot;)}&quot;
+      COMMENT=&quot;Updated from GitLab CI (${CI_COMMIT_SHORT_SHA})&quot;
+      RESPONSE_FILE=&quot;$(mktemp)&quot;
+      # Credentials are passed to curl on stdin so they never appear in
+      # the process list or the job log.
+      HTTP_CODE=&quot;$(
+        printf &#x27;user = &quot;%s:%s&quot;\n&#x27; &quot;$CONFLUENCE_EMAIL&quot; &quot;$CONFLUENCE_API_TOKEN&quot; |
+        curl --silent --show-error --config - \
+          --request PUT \
+          --header &#x27;X-Atlassian-Token: nocheck&#x27; \
+          --form &quot;file=@${SPEC_PATH};filename=${NAME}&quot; \
+          --form &#x27;minorEdit=true&#x27; \
+          --form-string &quot;comment=${COMMENT}&quot; \
+          --output &quot;$RESPONSE_FILE&quot; \
+          --write-out &#x27;%{http_code}&#x27; \
+          &quot;${CONFLUENCE_BASE_URL%/}/wiki/rest/api/content/${PAGE_ID}/child/attachment&quot;
+      )&quot;
+      case &quot;$HTTP_CODE&quot; in
+        2??) echo &quot;Uploaded ${NAME} to page ${PAGE_ID} (HTTP ${HTTP_CODE}).&quot; ;;
+        *)   echo &quot;Upload failed: HTTP ${HTTP_CODE}&quot; &gt;&amp;2; cat &quot;$RESPONSE_FILE&quot; &gt;&amp;2; exit 1 ;;
+      esac</code></pre>
+</div>
+<h4 id="bitbucket-pipelines">Bitbucket Pipelines</h4>
+<div class="code-block">
+<div class="code-head"><span>bitbucket-pipelines.yml</span><button type="button" class="copy-btn" data-copy="snip-bitbucket" hidden>Copy</button></div>
+<pre id="snip-bitbucket" tabindex="0"><code># bitbucket-pipelines.yml
+#
+# Uploads the OpenAPI spec to a Confluence page whenever it changes on main.
+# Repository variables to create (Repository settings &gt; Pipelines &gt;
+# Repository variables). Mark CONFLUENCE_API_TOKEN as &quot;Secured&quot;:
+#   CONFLUENCE_BASE_URL   e.g. https://your-site.atlassian.net   (no /wiki)
+#   CONFLUENCE_EMAIL
+#   CONFLUENCE_API_TOKEN  (Secured)
+#   PAGE_ID               numeric Confluence page ID
+
+image: atlassian/default-image:4
+
+pipelines:
+  branches:
+    main:
+      - step:
+          name: Publish OpenAPI spec to Confluence
+          condition:
+            changesets:
+              includePaths:
+                - &quot;openapi/openapi.yaml&quot;   # keep in sync with SPEC_PATH below
+          script:
+            - export SPEC_PATH=&quot;openapi/openapi.yaml&quot;   # &lt;- path in the repo
+            - export COMMENT=&quot;Updated from Bitbucket Pipelines (${BITBUCKET_COMMIT})&quot;
+            - |
+              set -eu
+              NAME=&quot;${ATTACHMENT_NAME:-$(basename &quot;$SPEC_PATH&quot;)}&quot;
+              RESPONSE_FILE=&quot;$(mktemp)&quot;
+              # Credentials are passed to curl on stdin so they never appear
+              # in the process list or the build log.
+              HTTP_CODE=&quot;$(
+                printf &#x27;user = &quot;%s:%s&quot;\n&#x27; &quot;$CONFLUENCE_EMAIL&quot; &quot;$CONFLUENCE_API_TOKEN&quot; |
+                curl --silent --show-error --config - \
+                  --request PUT \
+                  --header &#x27;X-Atlassian-Token: nocheck&#x27; \
+                  --form &quot;file=@${SPEC_PATH};filename=${NAME}&quot; \
+                  --form &#x27;minorEdit=true&#x27; \
+                  --form-string &quot;comment=${COMMENT}&quot; \
+                  --output &quot;$RESPONSE_FILE&quot; \
+                  --write-out &#x27;%{http_code}&#x27; \
+                  &quot;${CONFLUENCE_BASE_URL%/}/wiki/rest/api/content/${PAGE_ID}/child/attachment&quot;
+              )&quot;
+              case &quot;$HTTP_CODE&quot; in
+                2??) echo &quot;Uploaded ${NAME} to page ${PAGE_ID} (HTTP ${HTTP_CODE}).&quot; ;;
+                *)   echo &quot;Upload failed: HTTP ${HTTP_CODE}&quot; &gt;&amp;2; cat &quot;$RESPONSE_FILE&quot; &gt;&amp;2; exit 1 ;;
+              esac</code></pre>
+</div>
+<h4 id="curl">curl (shell script)</h4>
+<div class="code-block">
+<div class="code-head"><span>curl.sh</span><button type="button" class="copy-btn" data-copy="snip-curl" hidden>Copy</button></div>
+<pre id="snip-curl" tabindex="0"><code>#!/bin/sh
+# Upload an OpenAPI spec to a Confluence Cloud page as an attachment.
+# PUT creates the attachment, or adds a new version if one with the same
+# file name already exists on the page.
+#
+# Required environment variables:
+#   CONFLUENCE_BASE_URL   e.g. https://your-site.atlassian.net   (no /wiki)
+#   CONFLUENCE_EMAIL      Atlassian account email that owns the token
+#   CONFLUENCE_API_TOKEN  Atlassian API token (keep it in a secret store)
+#   PAGE_ID               numeric ID of the Confluence page
+#   SPEC_PATH             path to the spec file, e.g. openapi/openapi.yaml
+# Optional:
+#   ATTACHMENT_NAME       file name on the page (default: basename of SPEC_PATH)
+#   COMMENT               version comment (default: &quot;Updated from CI&quot;)
+#
+# Do not add `set -x`: it would print the token.
+
+set -eu
+
+: &quot;${CONFLUENCE_BASE_URL:?CONFLUENCE_BASE_URL is not set}&quot;
+: &quot;${CONFLUENCE_EMAIL:?CONFLUENCE_EMAIL is not set}&quot;
+: &quot;${CONFLUENCE_API_TOKEN:?CONFLUENCE_API_TOKEN is not set}&quot;
+: &quot;${PAGE_ID:?PAGE_ID is not set}&quot;
+: &quot;${SPEC_PATH:?SPEC_PATH is not set}&quot;
+
+if [ ! -f &quot;$SPEC_PATH&quot; ]; then
+  echo &quot;Spec file not found: $SPEC_PATH&quot; &gt;&amp;2
+  exit 1
+fi
+
+BASE_URL=&quot;${CONFLUENCE_BASE_URL%/}&quot;
+NAME=&quot;${ATTACHMENT_NAME:-$(basename &quot;$SPEC_PATH&quot;)}&quot;
+COMMENT=&quot;${COMMENT:-Updated from CI}&quot;
+RESPONSE_FILE=&quot;$(mktemp)&quot;
+trap &#x27;rm -f &quot;$RESPONSE_FILE&quot;&#x27; EXIT
+
+# Credentials go to curl on stdin (printf is a shell builtin), so they never
+# appear in the process list or in any log output.
+HTTP_CODE=&quot;$(
+  printf &#x27;user = &quot;%s:%s&quot;\n&#x27; &quot;$CONFLUENCE_EMAIL&quot; &quot;$CONFLUENCE_API_TOKEN&quot; |
+  curl --silent --show-error --config - \
+    --request PUT \
+    --header &#x27;X-Atlassian-Token: nocheck&#x27; \
+    --form &quot;file=@${SPEC_PATH};filename=${NAME}&quot; \
+    --form &#x27;minorEdit=true&#x27; \
+    --form-string &quot;comment=${COMMENT}&quot; \
+    --output &quot;$RESPONSE_FILE&quot; \
+    --write-out &#x27;%{http_code}&#x27; \
+    &quot;${BASE_URL}/wiki/rest/api/content/${PAGE_ID}/child/attachment&quot;
+)&quot;
+
+case &quot;$HTTP_CODE&quot; in
+  2??)
+    echo &quot;Uploaded ${NAME} to page ${PAGE_ID} (HTTP ${HTTP_CODE}).&quot;
+    ;;
+  *)
+    echo &quot;Upload failed: HTTP ${HTTP_CODE}&quot; &gt;&amp;2
+    cat &quot;$RESPONSE_FILE&quot; &gt;&amp;2
+    echo &gt;&amp;2
+    exit 1
+    ;;
+esac</code></pre>
+</div>
+<h3 id="behaviour-and-safety">Behaviour and safety</h3>
+<ul>
+<li><strong>Fails on non-2xx.</strong> The HTTP status is captured and any response other than 2xx prints the status and response body to stderr and exits 1, which fails the job.</li>
+<li><strong>Never echoes the token.</strong> Credentials are piped to curl through <code>--config -</code> on stdin, not passed with <code>-u</code> on the command line, so they do not appear in the process list. Do not add <code>set -x</code>, <code>curl -v</code>, or <code>CI_DEBUG_TRACE</code>, which can print them.</li>
+<li><strong>Same file name every run.</strong> A different name creates a second attachment rather than a new version.</li>
+<li><strong>Multi-file specs.</strong> <code>$ref</code> to other files is not resolved by the viewer in v1. Bundle first, for example <code>npx @redocly/cli bundle openapi.yaml -o dist/openapi.yaml</code>, and set <code>SPEC_PATH</code> to the bundled file.</li>
+<li><strong>Paths with <code>;</code> or <code>,</code></strong> in <code>SPEC_PATH</code> are not supported by curl's form syntax. Use a plain path.</li>
+<li><strong>Scoped API tokens</strong> are untested with this endpoint (see the note on scoped tokens above). The snippets assume a standard API token.</li>
+<li><strong>Image pins.</strong> The GitLab and Bitbucket snippets use <code>curlimages/curl:8.10.1</code> and <code>atlassian/default-image:4</code>. Update them to current versions on your own schedule.</li>
+</ul>
+<h2 id="checking-that-it-worked">Checking that it worked</h2>
+<p>A successful call returns HTTP 200 with a JSON body. On the page, confirm in the attachments view that the version number went up, then reload to see the new content.</p>
+<h2 id="common-failures">Common failures</h2>
+<div class="table-wrap" role="region" aria-label="Table" tabindex="0">
+<table>
+<thead><tr><th scope="col">Response</th><th scope="col">Likely cause</th></tr></thead>
+<tbody>
+<tr><td>401</td><td>Wrong email or token, or the token has expired</td></tr>
+<tr><td>403 with "XSRF check failed"</td><td>The <code>X-Atlassian-Token: nocheck</code> header is missing</td></tr>
+<tr><td>403 otherwise</td><td>The account cannot add attachments to that page</td></tr>
+<tr><td>404</td><td>Wrong page ID, wrong site URL, or the account cannot see the page</td></tr>
+<tr><td>413</td><td>The file is larger than your site's maximum attachment size</td></tr>
+</tbody>
+</table>
+</div>
+<p>See <a href="troubleshooting.html">Troubleshooting</a> for rendering problems after a successful upload.</p>
+<nav class="pager" aria-label="Previous and next page"><span>&larr; <a href="attachment-mode.html">Previous: Attachment mode</a></span><span><a href="troubleshooting.html">Next: Troubleshooting</a> &rarr;</span></nav>
+</div>
+</div></main>
+<footer class="site-footer"><div class="wrap">
+<ul><li><a href="../index.html">Home</a></li><li><a href="../docs/index.html">Documentation</a></li><li><a href="../privacy.html">Privacy Policy</a></li><li><a href="../eula.html">End User License Agreement</a></li><li><a href="../support.html">Support</a></li></ul>
+<p>Not affiliated with Atlassian; Atlassian, Confluence and Marketplace are trademarks of Atlassian Pty Ltd.</p>
+<p>Swagger is a trademark of SmartBear Software. This app is not affiliated with or endorsed by SmartBear.</p>
+<p>&copy; [VENDOR LEGAL NAME]</p>
+</div></footer>
+<script>
+(function () {
+  var btns = document.querySelectorAll('.copy-btn[data-copy]');
+  Array.prototype.forEach.call(btns, function (b) {
+    b.hidden = false;
+    b.addEventListener('click', function () {
+      var el = document.getElementById(b.getAttribute('data-copy'));
+      var text = el ? el.textContent : '';
+      var done = function () {
+        b.textContent = 'Copied';
+        setTimeout(function () { b.textContent = 'Copy'; }, 2000);
+      };
+      var fallback = function () {
+        var ta = document.createElement('textarea');
+        ta.value = text; ta.setAttribute('readonly', '');
+        ta.style.position = 'fixed'; ta.style.opacity = '0';
+        document.body.appendChild(ta); ta.select();
+        try { document.execCommand('copy'); done(); } catch (e) { b.textContent = 'Press Ctrl+C'; }
+        document.body.removeChild(ta);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done, fallback);
+      } else { fallback(); }
+    });
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Migrating from a Connect-based Swagger macro | OpenAPI Swagger Viewer for Confluence</title>
+<meta name="description" content="Why and how to replace a Connect-based Swagger or OpenAPI macro before Atlassian ends Connect support on 31 January 2027.">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../site.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header"><div class="wrap">
+<a class="brand" href="../../index.html">OpenAPI Swagger Viewer for Confluence</a>
+<nav class="site-nav" aria-label="Main"><ul><li><a href="../../docs/index.html">Docs</a></li><li><a href="../../docs/migrating/index.html" aria-current="page">Migrating</a></li><li><a href="../../privacy.html">Privacy</a></li><li><a href="../../eula.html">EULA</a></li><li><a href="../../support.html">Support</a></li></ul></nav>
+</div></header>
+<main id="main"><div class="wrap">
+<div class="prose">
+<nav aria-label="Breadcrumb" class="crumbs"><a href="../../docs/index.html">Documentation</a> / <span aria-current="page">Migrating</span></nav>
+<nav aria-label="Documentation"><ul class="docs-nav"><li><a href="../../docs/index.html">Overview</a></li><li><a href="../../docs/quick-start.html">Quick start</a></li><li><a href="../../docs/attachment-mode.html">Attachment mode</a></li><li><a href="../../docs/ci-push.html">CI push</a></li><li><a href="../../docs/troubleshooting.html">Troubleshooting</a></li><li><a href="../../docs/faq.html">FAQ</a></li><li><a href="../../docs/migrating/index.html" aria-current="page">Migrating</a></li></ul></nav>
+<h1 id="migrating-from-a-connect-based-swagger-macro">Migrating from a Connect-based Swagger macro</h1>
+<h2 id="why-you-need-to-move">Why you need to move</h2>
+<p>Atlassian is ending support for Connect apps on <strong>31 January 2027</strong>. Admins have been seeing an "unsupported after January 2027" banner for apps that have not moved to Forge. Many Swagger and OpenAPI macros for Confluence are Connect-only, and their vendors have not published Forge versions. After the end-of-support date those macros may stop working, and your pages would show an error or an empty box instead of your API reference.</p>
+<p>OpenAPI Viewer is built on Forge and is Runs on Atlassian. It also solves the private-repository problem without storing a token: your pipeline <a href="../ci-push.html">pushes the spec to the page</a>.</p>
+<h2 id="five-steps">Five steps</h2>
+<h3 id="1-inventory">1. Inventory</h3>
+<p>List the pages that use the old macro. Check whether your old app offers a usage list, then search Confluence for pages you know document APIs. Note for each page where the spec comes from: pasted text, an attachment, or a URL.</p>
+<h3 id="2-collect-the-specs">2. Collect the specs</h3>
+<p>For pasted specs, copy the text out of the old macro's configuration. For specs loaded from a URL, download the file from its source. Version 1 of OpenAPI Viewer does not fetch from URLs (see <a href="../faq.html">FAQ</a>), so every spec becomes either pasted text (up to about 150 KB) or a page attachment.</p>
+<h3 id="3-install-openapi-viewer">3. Install OpenAPI Viewer</h3>
+<p>Install it from the Marketplace alongside the old app. Do not uninstall the old app yet. The trial is 30 days, and sites with 10 users or fewer are free. See the <a href="../quick-start.html">quick start</a>.</p>
+<h3 id="4-replace-the-macros-page-by-page">4. Replace the macros page by page</h3>
+<p>On each page: add the OpenAPI Viewer macro, choose paste or <a href="../attachment-mode.html">attachment mode</a>, compare the output with the old rendering, then delete the old macro. For specs that used to come from a URL or a private repository, set up the <a href="../ci-push.html">CI push</a> so the page keeps updating. Start with your most visited pages.</p>
+<h3 id="5-verify-and-clean-up">5. Verify and clean up</h3>
+<p>Reload each page as a normal reader, check deep links to operations, and check dark mode. Then uninstall the old app, well before the end-of-support date, and keep the list from step 1 as a record.</p>
+<h2 id="things-that-will-differ">Things that will differ</h2>
+<ul>
+<li>No "Try it out" and no URL fetch (see <a href="../faq.html">FAQ</a>).</li>
+<li><code>$ref</code> to other files needs a bundled single file for now.</li>
+<li>Old links that point at an operation inside the previous macro will not carry over. New deep links start from the new macro.</li>
+</ul>
+<h2 id="feature-map">Feature map</h2>
+<p>What OpenAPI Viewer offers. The per-app comparison (what the previous app does, and what changes) is in the vendor guides below.</p>
+<div class="table-wrap" role="region" aria-label="Table" tabindex="0">
+<table>
+<thead><tr><th scope="col">Capability</th><th scope="col">OpenAPI Viewer</th></tr></thead>
+<tbody>
+<tr><td>OpenAPI 2.0 / 3.0 / 3.1</td><td>Yes</td></tr>
+<tr><td>Paste YAML/JSON</td><td>Yes (about 150 KB)</td></tr>
+<tr><td>Render page attachment</td><td>Yes (latest or pinned version)</td></tr>
+<tr><td>Load from URL</td><td>No (by design)</td></tr>
+<tr><td>Try it out</td><td>No (by design)</td></tr>
+<tr><td>Private repository workflow</td><td>CI push to attachment</td></tr>
+<tr><td>Search / expand-collapse / deep links</td><td>Yes</td></tr>
+<tr><td>Full-screen / auto-height</td><td>Yes</td></tr>
+<tr><td>Dark mode</td><td>Yes</td></tr>
+<tr><td>Runs on Atlassian</td><td>Yes</td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="vendor-guides">Vendor guides</h2>
+<ul>
+<li><a href="from-open-api-swagger-integration.html">Open API (Swagger) Integration</a></li>
+<li><a href="from-swagger-ui-for-confluence.html">Swagger UI for Confluence (Tech Labs)</a></li>
+<li><a href="from-open-api-swagger-editor.html">Open API (Swagger) Editor for Confluence (EliteSoft)</a></li>
+</ul>
+<p>No guide yet for the Dutch Beginners app; the five steps above apply to it as well.</p>
+<nav class="pager" aria-label="Previous and next page"><span>&larr; <a href="../faq.html">Previous: FAQ</a></span><span></span></nav>
+</div>
+</div></main>
+<footer class="site-footer"><div class="wrap">
+<ul><li><a href="../../index.html">Home</a></li><li><a href="../../docs/index.html">Documentation</a></li><li><a href="../../privacy.html">Privacy Policy</a></li><li><a href="../../eula.html">End User License Agreement</a></li><li><a href="../../support.html">Support</a></li></ul>
+<p>Not affiliated with Atlassian; Atlassian, Confluence and Marketplace are trademarks of Atlassian Pty Ltd.</p>
+<p>Swagger is a trademark of SmartBear Software. This app is not affiliated with or endorsed by SmartBear.</p>
+<p>&copy; [VENDOR LEGAL NAME]</p>
+</div></footer>
+</body>
+</html>

@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quick start | OpenAPI Swagger Viewer for Confluence</title>
+<meta name="description" content="From install to a rendered API reference on a Confluence page in about five minutes.">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../site.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header"><div class="wrap">
+<a class="brand" href="../index.html">OpenAPI Swagger Viewer for Confluence</a>
+<nav class="site-nav" aria-label="Main"><ul><li><a href="../docs/index.html" aria-current="page">Docs</a></li><li><a href="../docs/migrating/index.html">Migrating</a></li><li><a href="../privacy.html">Privacy</a></li><li><a href="../eula.html">EULA</a></li><li><a href="../support.html">Support</a></li></ul></nav>
+</div></header>
+<main id="main"><div class="wrap">
+<div class="prose">
+<nav aria-label="Breadcrumb" class="crumbs"><a href="../docs/index.html">Documentation</a> / <span aria-current="page">Quick start</span></nav>
+<nav aria-label="Documentation"><ul class="docs-nav"><li><a href="../docs/index.html">Overview</a></li><li><a href="../docs/quick-start.html" aria-current="page">Quick start</a></li><li><a href="../docs/attachment-mode.html">Attachment mode</a></li><li><a href="../docs/ci-push.html">CI push</a></li><li><a href="../docs/troubleshooting.html">Troubleshooting</a></li><li><a href="../docs/faq.html">FAQ</a></li><li><a href="../docs/migrating/index.html">Migrating</a></li></ul></nav>
+<h1 id="quick-start">Quick start</h1>
+<p>This guide takes you from zero to a rendered API reference on a Confluence page in about five minutes. You need to be a Confluence site admin (to install) and have permission to edit the page you want to add the macro to.</p>
+<h2 id="1-install-the-app">1. Install the app</h2>
+<ol>
+<li>In Confluence, open <strong>Apps &gt; Find new apps</strong> (or go to the Atlassian Marketplace and search for "OpenAPI Swagger Viewer for Confluence").</li>
+<li>Open the listing and choose <strong>Try it free</strong>. Every site gets a 30-day trial, and sites with 10 users or fewer stay on the free tier.</li>
+<li>Confirm the install. The app is built on Atlassian Forge and Runs on Atlassian, so the install prompt does not ask for access to any external service.</li>
+</ol>
+<h2 id="2-add-the-macro-to-a-page">2. Add the macro to a page</h2>
+<ol>
+<li>Create a page or open an existing one and click <strong>Edit</strong>.</li>
+<li>Type <code>/openapi</code> in the editor and pick <strong>OpenAPI Viewer</strong> from the list. (You can also use the <strong>+</strong> toolbar button and search for it.)</li>
+<li>The macro appears as a placeholder with a configuration panel.</li>
+</ol>
+<h2 id="3-paste-your-spec">3. Paste your spec</h2>
+<ol>
+<li>In the configuration panel, set <strong>Source</strong> to <strong>Paste</strong>.</li>
+<li>Paste your OpenAPI document. YAML and JSON are both accepted, and the versions supported are OpenAPI 2.0 (Swagger), 3.0.x, and 3.1.</li>
+<li>Click <strong>Save</strong>.</li>
+</ol>
+<p>The editor shows a preview of the rendered spec. If the document cannot be parsed, you will see the parser message with a line number instead of a blank box. See <a href="troubleshooting.html">Troubleshooting</a> for how to read it.</p>
+<p><strong>Size limit:</strong> pasted specs are limited to roughly 150 KB because Confluence stores macro configuration with the page. If your spec is larger, use <a href="attachment-mode.html">attachment mode</a> instead. The macro tells you when you are over the limit.</p>
+<h2 id="4-publish">4. Publish</h2>
+<p>Click <strong>Publish</strong> (or <strong>Update</strong>) on the page. Readers will now see the rendered API reference with:</p>
+<ul>
+<li><strong>Expand / collapse</strong> controls for operations and tags</li>
+<li><strong>Search</strong> within the spec</li>
+<li><strong>Deep links</strong> to individual operations, so you can share a URL that jumps straight to <code>GET /pets/{id}</code></li>
+<li><strong>Full-screen</strong> view for long specs</li>
+<li><strong>Auto-height</strong>, so there is no inner scrollbar or cut-off content</li>
+<li><strong>Dark mode</strong> that follows the Confluence theme</li>
+</ul>
+<h2 id="what-to-do-next">What to do next</h2>
+<ul>
+<li>Specs change often. Rather than pasting a new copy each time, <a href="attachment-mode.html">attach the file to the page</a> and let the macro render the latest version.</li>
+<li>Want the page to update automatically whenever your repository changes? Set up <a href="ci-push.html">a CI push</a>. This is also how you document specs that live in private repositories.</li>
+<li>Coming from another Swagger macro? Read the <a href="migrating/index.html">migration overview</a>.</li>
+</ul>
+<h2 id="what-this-app-does-not-do">What this app does not do</h2>
+<p>By design, version 1 does not fetch a spec from a URL and does not include "Try it out". Both would require sending data outside Atlassian, which would mean the app could no longer be Runs on Atlassian. The <a href="faq.html">FAQ</a> explains the reasoning and the recommended alternative.</p>
+<h2 id="quick-checklist">Quick checklist</h2>
+<ul class="checklist">
+<li class="task"><input type="checkbox" disabled> App installed from the Marketplace</li>
+<li class="task"><input type="checkbox" disabled> Macro added to a page</li>
+<li class="task"><input type="checkbox" disabled> Spec pasted (or attached) and saved</li>
+<li class="task"><input type="checkbox" disabled> Page published</li>
+<li class="task"><input type="checkbox" disabled> Rendered output checked in a normal (non-editor) page view</li>
+</ul>
+<h2 id="need-help">Need help?</h2>
+<p>See <a href="troubleshooting.html">Troubleshooting</a> or the <a href="faq.html">FAQ</a>. To report a bug, see "How do I report a bug or ask for help?" in the FAQ.</p>
+<nav class="pager" aria-label="Previous and next page"><span>&larr; <a href="index.html">Documentation overview</a></span><span><a href="attachment-mode.html">Next: Attachment mode</a> &rarr;</span></nav>
+</div>
+</div></main>
+<footer class="site-footer"><div class="wrap">
+<ul><li><a href="../index.html">Home</a></li><li><a href="../docs/index.html">Documentation</a></li><li><a href="../privacy.html">Privacy Policy</a></li><li><a href="../eula.html">End User License Agreement</a></li><li><a href="../support.html">Support</a></li></ul>
+<p>Not affiliated with Atlassian; Atlassian, Confluence and Marketplace are trademarks of Atlassian Pty Ltd.</p>
+<p>Swagger is a trademark of SmartBear Software. This app is not affiliated with or endorsed by SmartBear.</p>
+<p>&copy; [VENDOR LEGAL NAME]</p>
+</div></footer>
+</body>
+</html>

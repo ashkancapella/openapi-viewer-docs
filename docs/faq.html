@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Frequently asked questions | OpenAPI Swagger Viewer for Confluence</title>
+<meta name="description" content="Answers on Try it out, URL loading, size limits, security, pricing, supported OpenAPI versions and support.">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../site.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header"><div class="wrap">
+<a class="brand" href="../index.html">OpenAPI Swagger Viewer for Confluence</a>
+<nav class="site-nav" aria-label="Main"><ul><li><a href="../docs/index.html" aria-current="page">Docs</a></li><li><a href="../docs/migrating/index.html">Migrating</a></li><li><a href="../privacy.html">Privacy</a></li><li><a href="../eula.html">EULA</a></li><li><a href="../support.html">Support</a></li></ul></nav>
+</div></header>
+<main id="main"><div class="wrap">
+<div class="prose">
+<nav aria-label="Breadcrumb" class="crumbs"><a href="../docs/index.html">Documentation</a> / <span aria-current="page">FAQ</span></nav>
+<nav aria-label="Documentation"><ul class="docs-nav"><li><a href="../docs/index.html">Overview</a></li><li><a href="../docs/quick-start.html">Quick start</a></li><li><a href="../docs/attachment-mode.html">Attachment mode</a></li><li><a href="../docs/ci-push.html">CI push</a></li><li><a href="../docs/troubleshooting.html">Troubleshooting</a></li><li><a href="../docs/faq.html" aria-current="page">FAQ</a></li><li><a href="../docs/migrating/index.html">Migrating</a></li></ul></nav>
+<h1 id="frequently-asked-questions">Frequently asked questions</h1>
+<h3 id="1-why-is-there-no-try-it-out-button">1. Why is there no "Try it out" button?</h3>
+<p>Sending live requests from a page to your API means the browser must contact arbitrary hosts, which requires external permissions on Atlassian Forge. Apps with those permissions cannot be <strong>Runs on Atlassian</strong>. We chose the Runs on Atlassian guarantee (nothing leaves Atlassian) over live calls. Use Postman, curl, or your API gateway's console for testing. We may offer a separate edition if enough customers ask for it.</p>
+<h3 id="2-can-the-macro-load-a-spec-from-a-url-or-a-git-repository">2. Can the macro load a spec from a URL or a Git repository?</h3>
+<p>No, not in version 1. Fetching a URL is outbound traffic, which the Runs on Atlassian model does not allow. Instead, <a href="ci-push.html">push the spec from CI</a> as a page attachment. This works for private repositories because the app never needs access to them.</p>
+<h3 id="3-what-are-the-size-limits">3. What are the size limits?</h3>
+<p>Pasted specs: about 150 KB. Attachments: no app-imposed small cap, but your site's maximum attachment size applies, and very large files render more slowly. See <a href="attachment-mode.html">attachment mode</a>.</p>
+<h3 id="4-is-my-data-secure-where-does-it-live">4. Is my data secure? Where does it live?</h3>
+<p>The app is built on Atlassian Forge and designed to run entirely on Atlassian infrastructure. It declares no external permissions, makes no outbound requests, stores no credentials, and has no analytics beacons. Your spec stays in your Confluence site (as macro configuration or as a page attachment), subject to the same access controls as the rest of the page. For data residency, the data follows Atlassian's hosting for your site; refer to Atlassian's documentation for details on your realm.</p>
+<h3 id="5-how-much-does-it-cost">5. How much does it cost?</h3>
+<p>Free for sites with up to 10 users. Larger sites are billed through Atlassian by user tier, and every site gets a 30-day trial. Current prices are on the Marketplace listing.</p>
+<h3 id="6-which-openapi-versions-are-supported">6. Which OpenAPI versions are supported?</h3>
+<p>OpenAPI 2.0 (Swagger), 3.0.x, and 3.1, in YAML or JSON. AsyncAPI, GraphQL, and Postman collections are not supported.</p>
+<h3 id="7-can-my-spec-use-ref-to-other-files">7. Can my spec use <code>$ref</code> to other files?</h3>
+<p>References inside the same document (<code>#/components/schemas/Pet</code>) work. References to other files or URLs are not resolved in version 1. Bundle your spec into one file before uploading, for example with <code>npx @redocly/cli bundle</code>. Resolving sibling attachments is planned as a fast follow.</p>
+<h3 id="8-does-it-support-dark-mode">8. Does it support dark mode?</h3>
+<p>Yes. The viewer follows the Confluence theme, including dark mode.</p>
+<h3 id="9-how-does-it-perform-on-huge-specs">9. How does it perform on huge specs?</h3>
+<p>The spec is parsed and rendered in your browser. Large specs take longer, and the page may feel slow if every operation is expanded at once. Keep operations collapsed, filter by tag, and split very large APIs into one spec (and one page) per service. See <a href="troubleshooting.html">Troubleshooting</a>.</p>
+<h3 id="10-is-there-a-jira-version">10. Is there a Jira version?</h3>
+<p>Not in version 1. The macro is for Confluence Cloud only. A Jira version is possible later if there is demand.</p>
+<h3 id="11-does-it-work-on-confluence-data-center-or-server">11. Does it work on Confluence Data Center or Server?</h3>
+<p>No. Atlassian Forge exists only for Cloud, so the app supports Confluence Cloud only.</p>
+<h3 id="12-how-do-i-report-a-bug-or-ask-for-help">12. How do I report a bug or ask for help?</h3>
+<p>Email <a href="mailto:support@[DOMAIN]">support@[DOMAIN]</a> or use the support link on the Marketplace listing's <strong>Support</strong> tab. You do not need to create an account. Please include your site URL, the page URL, the OpenAPI version, and (if you can share it) a minimal spec that reproduces the problem. Never include API tokens or passwords in a report. See also the <a href="../support.html">support page</a>.</p>
+<nav class="pager" aria-label="Previous and next page"><span>&larr; <a href="troubleshooting.html">Previous: Troubleshooting</a></span><span><a href="migrating/index.html">Migrating from another macro</a> &rarr;</span></nav>
+</div>
+</div></main>
+<footer class="site-footer"><div class="wrap">
+<ul><li><a href="../index.html">Home</a></li><li><a href="../docs/index.html">Documentation</a></li><li><a href="../privacy.html">Privacy Policy</a></li><li><a href="../eula.html">End User License Agreement</a></li><li><a href="../support.html">Support</a></li></ul>
+<p>Not affiliated with Atlassian; Atlassian, Confluence and Marketplace are trademarks of Atlassian Pty Ltd.</p>
+<p>Swagger is a trademark of SmartBear Software. This app is not affiliated with or endorsed by SmartBear.</p>
+<p>&copy; [VENDOR LEGAL NAME]</p>
+</div></footer>
+</body>
+</html>

@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Migrating from Open API (Swagger) Integration to OpenAPI Viewer for Confluence | OpenAPI Swagger Viewer for Confluence</title>
+<meta name="description" content="Move pages from Open API (Swagger) Integration (Toshihiro Sato) to OpenAPI Viewer: feature map, five steps, what changes.">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../site.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header"><div class="wrap">
+<a class="brand" href="../../index.html">OpenAPI Swagger Viewer for Confluence</a>
+<nav class="site-nav" aria-label="Main"><ul><li><a href="../../docs/index.html">Docs</a></li><li><a href="../../docs/migrating/index.html" aria-current="page">Migrating</a></li><li><a href="../../privacy.html">Privacy</a></li><li><a href="../../eula.html">EULA</a></li><li><a href="../../support.html">Support</a></li></ul></nav>
+</div></header>
+<main id="main"><div class="wrap">
+<div class="prose">
+<nav aria-label="Breadcrumb" class="crumbs"><a href="../../docs/index.html">Documentation</a> / <a href="../../docs/migrating/index.html">Migrating</a> / <span aria-current="page">Open API (Swagger) Integration</span></nav>
+<nav aria-label="Documentation"><ul class="docs-nav"><li><a href="../../docs/index.html">Overview</a></li><li><a href="../../docs/quick-start.html">Quick start</a></li><li><a href="../../docs/attachment-mode.html">Attachment mode</a></li><li><a href="../../docs/ci-push.html">CI push</a></li><li><a href="../../docs/troubleshooting.html">Troubleshooting</a></li><li><a href="../../docs/faq.html">FAQ</a></li><li><a href="../../docs/migrating/index.html">Migrating</a></li></ul></nav>
+<h1 id="migrating-from-open-api-swagger-integration-to-openapi-viewer-for-confluence">Migrating from Open API (Swagger) Integration to OpenAPI Viewer for Confluence</h1>
+<p>If your Confluence Cloud pages render an OpenAPI or Swagger spec with the <strong>Open API (Swagger) Integration</strong> macro by Toshihiro Sato, this guide moves them to OpenAPI Viewer, an app built on Atlassian Forge and designed to be <strong>Runs on Atlassian</strong>: nothing leaves Atlassian, and the app stores no credentials. Allow about 30 minutes for a handful of pages.</p>
+<p>Facts about the old app were checked on 13 October 2026 against its Marketplace listing and vendor documentation.</p>
+<h2 id="why-migrate-now">Why migrate now</h2>
+<p>Atlassian ends support for the Connect framework on <strong>31 January 2027</strong>, and warns that breakages will increase afterwards. Since July 2026, Confluence admins have seen a banner on apps that still run on Connect, saying the platform will be unsupported after that date.</p>
+<p>Open API (Swagger) Integration is listed as a Connect app (version 1.1.15-AC). Its latest Confluence Cloud release is dated 19 September 2024, and its listing shows no Forge version.</p>
+<h2 id="feature-map">Feature map</h2>
+<div class="table-wrap" role="region" aria-label="Table" tabindex="0">
+<table>
+<thead><tr><th scope="col">Open API (Swagger) Integration</th><th scope="col">OpenAPI Viewer</th><th scope="col">Status</th></tr></thead>
+<tbody>
+<tr><td>Swagger UI engine (5.7.2 per listing)</td><td>Swagger UI-compatible renderer bundled in the app</td><td>Same</td></tr>
+<tr><td>Swagger 2.0 and OAS 3.0</td><td>OpenAPI 2.0, 3.0.x, 3.1</td><td>Same (3.1 added)</td></tr>
+<tr><td>Spec pasted in macro body</td><td>Paste source, up to about 150 KB</td><td>Same</td></tr>
+<tr><td>Spec as page attachment (copy the attachment link into the URL field)</td><td>Attachment source: pick the file from a list, "always latest" or pinned version</td><td>Different, simpler</td></tr>
+<tr><td>Spec from a hosted URL</td><td>Not supported</td><td>Not in v1. Workaround: <a href="../ci-push.html">CI push</a></td></tr>
+<tr><td>Spec from GitHub, GitLab or Bitbucket (access token, or username and password, entered in the macro)</td><td>Not supported</td><td>Not in v1. Workaround: <a href="../ci-push.html">CI push</a>, no token stored in the app</td></tr>
+<tr><td>"Try it out" on each operation</td><td>Not supported</td><td>Not in v1. Workaround: Postman, curl, or your gateway console</td></tr>
+<tr><td>Swagger Editor</td><td>Not supported</td><td>Not in v1. Workaround: edit in your repo or IDE</td></tr>
+<tr><td>AsyncAPI (added in 1.1.15)</td><td>Not supported</td><td>Not in v1</td></tr>
+<tr><td>CORS must be enabled on the server hosting your spec</td><td>Not needed</td><td>Better</td></tr>
+<tr><td>Search, expand/collapse, deep links, full-screen, auto-height, dark mode</td><td>Included</td><td>Same</td></tr>
+<tr><td>Price: from USD 10/year at 10 users; USD 100 at 100; USD 275 at 500</td><td>Free up to 10 users, then paid by user tier</td><td>Different</td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="five-steps">Five steps</h2>
+<ol>
+<li><strong>Export each spec.</strong> For a pasted spec, open the page in the editor, open the old macro, and copy the body into a file such as <code>openapi.yaml</code>. For an attached spec, the file is already on the page; no export is needed. For a spec loaded from a URL or Git, download the file from its source, or note the repository path for step 2.</li>
+<li><strong>Attach it, or set up CI push.</strong> Specs under about 150 KB can be pasted straight into the new macro. Anything larger, or anything that used to come from a URL or Git, goes in as an attachment on the page. To keep it fresh after every merge, add the pipeline from <a href="../ci-push.html">Push your spec from CI</a> (ready-made pipelines are on that page).</li>
+<li><strong>Install OpenAPI Viewer and replace the macro.</strong> Install it next to the old app (30-day trial). On each page add the new macro, choose <strong>Paste</strong> or <strong>Attachment</strong>, and delete the old macro. See the <a href="../quick-start.html">quick start</a> and <a href="../attachment-mode.html">attachment mode</a>.</li>
+<li><strong>Verify.</strong> Reload as a normal reader. Check that every path and schema appears, that deep links to operations work, and that dark mode looks right. Compare against the old rendering for your most visited page first.</li>
+<li><strong>Delete the old app.</strong> Once every page is checked, uninstall Open API (Swagger) Integration well before 31 January 2027. Your pages keep the new macro; the old app's data is not needed.</li>
+</ol>
+<h2 id="what-you-lose-and-why">What you lose, and why</h2>
+<ul>
+<li><strong>Try it out.</strong> Sending live requests from a page requires external permissions on Forge, and an app with external permissions cannot be Runs on Atlassian. We chose the guarantee over the button. See the <a href="../faq.html">FAQ</a>.</li>
+<li><strong>URL and Git fetch.</strong> Any fetch is outbound traffic, which Runs on Atlassian does not allow. The old app's documentation has you enter a personal access token in the macro dialog, or add it to a GitLab URL. With the push model, your pipeline uploads the spec using your own Confluence token, held only in your CI secret store. The app never reaches your repository and never holds a credential.</li>
+<li><strong>Editor and AsyncAPI.</strong> Not in version 1.</li>
+</ul>
+<nav class="pager" aria-label="Previous and next page"><span>&larr; <a href="index.html">Migration overview</a></span><span></span></nav>
+</div>
+</div></main>
+<footer class="site-footer"><div class="wrap">
+<ul><li><a href="../../index.html">Home</a></li><li><a href="../../docs/index.html">Documentation</a></li><li><a href="../../privacy.html">Privacy Policy</a></li><li><a href="../../eula.html">End User License Agreement</a></li><li><a href="../../support.html">Support</a></li></ul>
+<p>Not affiliated with Atlassian; Atlassian, Confluence and Marketplace are trademarks of Atlassian Pty Ltd.</p>
+<p>Swagger is a trademark of SmartBear Software. This app is not affiliated with or endorsed by SmartBear.</p>
+<p>&copy; [VENDOR LEGAL NAME]</p>
+</div></footer>
+</body>
+</html>

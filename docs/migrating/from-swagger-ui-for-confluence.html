@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Migrating from Swagger UI for Confluence (Tech Labs) to OpenAPI Viewer | OpenAPI Swagger Viewer for Confluence</title>
+<meta name="description" content="Move pages from Swagger UI for Confluence (Tech Labs) to OpenAPI Viewer: feature map, five steps, what changes.">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../site.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header"><div class="wrap">
+<a class="brand" href="../../index.html">OpenAPI Swagger Viewer for Confluence</a>
+<nav class="site-nav" aria-label="Main"><ul><li><a href="../../docs/index.html">Docs</a></li><li><a href="../../docs/migrating/index.html" aria-current="page">Migrating</a></li><li><a href="../../privacy.html">Privacy</a></li><li><a href="../../eula.html">EULA</a></li><li><a href="../../support.html">Support</a></li></ul></nav>
+</div></header>
+<main id="main"><div class="wrap">
+<div class="prose">
+<nav aria-label="Breadcrumb" class="crumbs"><a href="../../docs/index.html">Documentation</a> / <a href="../../docs/migrating/index.html">Migrating</a> / <span aria-current="page">Swagger UI for Confluence (Tech Labs)</span></nav>
+<nav aria-label="Documentation"><ul class="docs-nav"><li><a href="../../docs/index.html">Overview</a></li><li><a href="../../docs/quick-start.html">Quick start</a></li><li><a href="../../docs/attachment-mode.html">Attachment mode</a></li><li><a href="../../docs/ci-push.html">CI push</a></li><li><a href="../../docs/troubleshooting.html">Troubleshooting</a></li><li><a href="../../docs/faq.html">FAQ</a></li><li><a href="../../docs/migrating/index.html">Migrating</a></li></ul></nav>
+<h1 id="migrating-from-swagger-ui-for-confluence-tech-labs-to-openapi-viewer">Migrating from Swagger UI for Confluence (Tech Labs) to OpenAPI Viewer</h1>
+<p>If your Confluence Cloud pages show an OpenAPI or Swagger spec with <strong>Swagger UI for Confluence</strong> by Tech Labs, this guide moves them to OpenAPI Viewer, an app built on Atlassian Forge and designed to be <strong>Runs on Atlassian</strong>: no outbound traffic, no stored credentials. The old app is small and simple, so most sites finish in one sitting.</p>
+<p>Facts about the old app were checked on 13 October 2026 against its Marketplace listing and vendor documentation.</p>
+<h2 id="why-migrate-now">Why migrate now</h2>
+<p>Atlassian ends support for the Connect framework on <strong>31 January 2027</strong>, and warns that breakages will increase afterwards. Since July 2026, Confluence admins have seen a banner on apps that still run on Connect, saying the platform will be unsupported after that date.</p>
+<p>Swagger UI for Confluence is a Connect app (version 1.0.15-AC). Its latest release is dated 24 April 2025, which upgraded the bundled Swagger UI to 5.21.0, and its listing shows no Forge version.</p>
+<h2 id="feature-map">Feature map</h2>
+<p>The vendor's public documentation is a single "Getting Started" page, so several rows below are unconfirmed rather than known to be missing.</p>
+<div class="table-wrap" role="region" aria-label="Table" tabindex="0">
+<table>
+<thead><tr><th scope="col">Swagger UI for Confluence</th><th scope="col">OpenAPI Viewer</th><th scope="col">Status</th></tr></thead>
+<tbody>
+<tr><td>Open source Swagger UI (5.21.0 in the last release)</td><td>Swagger UI-compatible renderer bundled in the app</td><td>Same</td></tr>
+<tr><td>OpenAPI 3.x (per listing)</td><td>OpenAPI 2.0, 3.0.x, 3.1</td><td>Same or wider</td></tr>
+<tr><td>Spec pasted in macro body</td><td>Paste source, up to about 150 KB</td><td>Same</td></tr>
+<tr><td>Spec from a hosted URL (the guide uses the Petstore JSON as a test)</td><td>Not supported</td><td>Not in v1. Workaround: <a href="../ci-push.html">CI push</a></td></tr>
+<tr><td>Spec as page attachment</td><td>Attachment source: pick from a list, "always latest" or pinned</td><td>Same or new</td></tr>
+<tr><td>Git repository sources</td><td>Not supported</td><td>Different. Ours: <a href="../ci-push.html">CI push</a></td></tr>
+<tr><td>"Try it out"</td><td>Not supported</td><td>Not stated on the listing; the standard Swagger UI includes it. Not in v1. Workaround: Postman, curl or your gateway console</td></tr>
+<tr><td>Editor</td><td>None</td><td>Same (none documented)</td></tr>
+<tr><td>Search, expand/collapse, deep links, full-screen, auto-height, dark mode</td><td>Included</td><td>Same or better</td></tr>
+<tr><td>Price: from USD 10/year at 10 users; USD 100 at 100; USD 300 at 500</td><td>Free up to 10 users, then paid by user tier</td><td>Different</td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="five-steps">Five steps</h2>
+<ol>
+<li><strong>Export each spec.</strong> Open the page in the editor, open the Swagger UI macro, and copy the body into a file such as <code>openapi.yaml</code>. If the macro points at a URL, download the file from that URL, or note which repository path it comes from.</li>
+<li><strong>Attach it, or set up CI push.</strong> A spec under about 150 KB can be pasted into the new macro. A larger one, or one that used to be loaded from a URL, is attached to the page. To keep it current after every merge, add the pipeline from <a href="../ci-push.html">Push your spec from CI</a>; ready-made pipelines are on that page.</li>
+<li><strong>Install OpenAPI Viewer and replace the macro.</strong> Install it beside the old app (30-day trial). On each page add the new macro, choose <strong>Paste</strong> or <strong>Attachment</strong>, then delete the old macro. See the <a href="../quick-start.html">quick start</a> and <a href="../attachment-mode.html">attachment mode</a>.</li>
+<li><strong>Verify.</strong> Reload each page as a normal reader. Check that all paths and schemas render, deep links to operations work, and dark mode looks right. Start with your most visited page.</li>
+<li><strong>Delete the old app.</strong> After every page is checked, uninstall Swagger UI for Confluence well before 31 January 2027. Keep your page list as a record.</li>
+</ol>
+<h2 id="what-you-lose-and-why">What you lose, and why</h2>
+<ul>
+<li><strong>Loading from a URL.</strong> If your spec lived at a URL, that is outbound traffic from the page, which Runs on Atlassian does not allow. Put the file on the page as an attachment instead.</li>
+<li><strong>Try it out.</strong> If your old setup let readers send live requests, that capability needs external permissions on Forge, and an app with external permissions cannot be Runs on Atlassian. See the <a href="../faq.html">FAQ</a>. Test requests from Postman, curl or your gateway console.</li>
+<li><strong>Private specs.</strong> Rather than give an app a token for your repository, your pipeline uploads the spec as a page attachment using your own Confluence token, kept in your CI secret store. The app never reaches your repository and never holds a credential.</li>
+</ul>
+<nav class="pager" aria-label="Previous and next page"><span>&larr; <a href="index.html">Migration overview</a></span><span></span></nav>
+</div>
+</div></main>
+<footer class="site-footer"><div class="wrap">
+<ul><li><a href="../../index.html">Home</a></li><li><a href="../../docs/index.html">Documentation</a></li><li><a href="../../privacy.html">Privacy Policy</a></li><li><a href="../../eula.html">End User License Agreement</a></li><li><a href="../../support.html">Support</a></li></ul>
+<p>Not affiliated with Atlassian; Atlassian, Confluence and Marketplace are trademarks of Atlassian Pty Ltd.</p>
+<p>Swagger is a trademark of SmartBear Software. This app is not affiliated with or endorsed by SmartBear.</p>
+<p>&copy; [VENDOR LEGAL NAME]</p>
+</div></footer>
+</body>
+</html>

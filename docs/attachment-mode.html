@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Attachment mode: render a spec attached to the page | OpenAPI Swagger Viewer for Confluence</title>
+<meta name="description" content="Render an OpenAPI file attached to the page: always latest or a pinned version.">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../site.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header"><div class="wrap">
+<a class="brand" href="../index.html">OpenAPI Swagger Viewer for Confluence</a>
+<nav class="site-nav" aria-label="Main"><ul><li><a href="../docs/index.html" aria-current="page">Docs</a></li><li><a href="../docs/migrating/index.html">Migrating</a></li><li><a href="../privacy.html">Privacy</a></li><li><a href="../eula.html">EULA</a></li><li><a href="../support.html">Support</a></li></ul></nav>
+</div></header>
+<main id="main"><div class="wrap">
+<div class="prose">
+<nav aria-label="Breadcrumb" class="crumbs"><a href="../docs/index.html">Documentation</a> / <span aria-current="page">Attachment mode</span></nav>
+<nav aria-label="Documentation"><ul class="docs-nav"><li><a href="../docs/index.html">Overview</a></li><li><a href="../docs/quick-start.html">Quick start</a></li><li><a href="../docs/attachment-mode.html" aria-current="page">Attachment mode</a></li><li><a href="../docs/ci-push.html">CI push</a></li><li><a href="../docs/troubleshooting.html">Troubleshooting</a></li><li><a href="../docs/faq.html">FAQ</a></li><li><a href="../docs/migrating/index.html">Migrating</a></li></ul></nav>
+<h1 id="attachment-mode-render-a-spec-attached-to-the-page">Attachment mode: render a spec attached to the page</h1>
+<p>Attachment mode renders an OpenAPI file that is attached to the same Confluence page as the macro. It is the right choice when your spec is larger than the paste limit, when you want to keep one source file, or when you want the page to update without anyone editing it.</p>
+<h2 id="attach-the-file">Attach the file</h2>
+<ol>
+<li>Open the page and click <strong>Edit</strong>.</li>
+<li>Attach your spec. Drag the file onto the page, or use <strong>Insert &gt; Files and images</strong>, or the page's attachments view.</li>
+<li>The file must end in <code>.yaml</code>, <code>.yml</code>, or <code>.json</code>. Other extensions are not listed in the picker.</li>
+<li>Publish the page. The attachment is stored by Confluence in the normal way, like any other attachment.</li>
+</ol>
+<p>Spaces in file names cause trouble in scripts, so a plain name such as <code>openapi.yaml</code> is a good choice. If you plan to update the file from CI, choose the name once and keep it (see <a href="ci-push.html">CI push</a>).</p>
+<h2 id="point-the-macro-at-the-file">Point the macro at the file</h2>
+<ol>
+<li>Add the <strong>OpenAPI Viewer</strong> macro (type <code>/openapi</code>).</li>
+<li>Set <strong>Source</strong> to <strong>Attachment</strong>.</li>
+<li>Choose the file from the <strong>Attachment</strong> list. Only <code>.yaml</code>, <code>.yml</code>, and <code>.json</code> files on the current page are shown.</li>
+<li>Choose a version mode, described below, and click <strong>Save</strong>.</li>
+</ol>
+<h2 id="latest-vs-pinned-version">Latest vs. pinned version</h2>
+<div class="table-wrap" role="region" aria-label="Table" tabindex="0">
+<table>
+<thead><tr><th scope="col">Mode</th><th scope="col">What readers see</th><th scope="col">Use it when</th></tr></thead>
+<tbody>
+<tr><td><strong>Always latest</strong> (default)</td><td>The newest version of the attachment, every time the page is loaded</td><td>The page should track your current API, or a pipeline keeps the file up to date</td></tr>
+<tr><td><strong>Pinned version</strong></td><td>A specific version number you choose, even after newer versions are uploaded</td><td>The page documents a released API version and must not change under readers</td></tr>
+</tbody>
+</table>
+</div>
+<p>Confluence keeps every uploaded version of an attachment. To see them, open the page's attachments view and expand the file's version history. Pinning refers to that version number. If you later delete that version, the macro will report that the attachment cannot be found.</p>
+<h2 id="update-the-spec-without-editing-the-page">Update the spec without editing the page</h2>
+<p>This is the main advantage of attachment mode. In "always latest" mode:</p>
+<ol>
+<li>Upload a new version of the file with the same name. You can do this by hand (attach a file with the same name and choose to upload a new version when Confluence asks) or from CI using the <a href="ci-push.html">REST call in the CI push guide</a>.</li>
+<li>Readers see the new version the next time they load or refresh the page. The page content itself is not edited.</li>
+</ol>
+<p>Uploading a file with a different name creates a second attachment instead of a new version. Keep the name stable.</p>
+<h2 id="size-limits">Size limits</h2>
+<ul>
+<li><strong>Pasted specs</strong> are capped at roughly 150 KB. Attachment mode has no such cap.</li>
+<li><strong>Attachments</strong> are subject to the maximum attachment size configured for your Confluence site (an admin setting). The app does not add its own small limit, but very large documents take longer to parse and display. See "Performance" in the <a href="faq.html">FAQ</a>.</li>
+</ul>
+<h2 id="permissions">Permissions</h2>
+<p>The macro reads the attachment as the person viewing the page. Anyone who can view the page can see the rendered spec. If the page is restricted, only people with access to the page can see the rendered output. If someone sees a permission error, see <a href="troubleshooting.html">Troubleshooting</a>.</p>
+<h2 id="files-with-references-to-other-files">Files with references to other files</h2>
+<p>If your spec uses <code>$ref</code> to point at other files (for example <code>./schemas/pet.yaml</code>), those references are not resolved in version 1. Bundle the spec into one file first. For example, with Redocly CLI:</p>
+<pre><code>npx @redocly/cli bundle openapi.yaml -o dist/openapi.yaml</code></pre>
+<p>Then attach or push <code>dist/openapi.yaml</code>. Multi-file support is planned. See the <a href="faq.html">FAQ</a>.</p>
+<nav class="pager" aria-label="Previous and next page"><span>&larr; <a href="quick-start.html">Previous: Quick start</a></span><span><a href="ci-push.html">Next: CI push</a> &rarr;</span></nav>
+</div>
+</div></main>
+<footer class="site-footer"><div class="wrap">
+<ul><li><a href="../index.html">Home</a></li><li><a href="../docs/index.html">Documentation</a></li><li><a href="../privacy.html">Privacy Policy</a></li><li><a href="../eula.html">End User License Agreement</a></li><li><a href="../support.html">Support</a></li></ul>
+<p>Not affiliated with Atlassian; Atlassian, Confluence and Marketplace are trademarks of Atlassian Pty Ltd.</p>
+<p>Swagger is a trademark of SmartBear Software. This app is not affiliated with or endorsed by SmartBear.</p>
+<p>&copy; [VENDOR LEGAL NAME]</p>
+</div></footer>
+</body>
+</html>

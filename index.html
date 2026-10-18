@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OpenAPI Swagger Viewer for Confluence</title>
+<meta name="description" content="Render OpenAPI 3.1 &amp; Swagger specs in Confluence. Private repos via CI push. Runs on Atlassian: no egress, no credentials.">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="site.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header"><div class="wrap">
+<a class="brand" href="index.html">OpenAPI Swagger Viewer for Confluence</a>
+<nav class="site-nav" aria-label="Main"><ul><li><a href="docs/index.html">Docs</a></li><li><a href="docs/migrating/index.html">Migrating</a></li><li><a href="privacy.html">Privacy</a></li><li><a href="eula.html">EULA</a></li><li><a href="support.html">Support</a></li></ul></nav>
+</div></header>
+<main id="main"><div class="wrap">
+<div class="hero">
+<h1>OpenAPI Swagger Viewer for Confluence</h1>
+<p class="lede">Render OpenAPI 3.1 &amp; Swagger specs in Confluence. Private repos via CI push. Runs on Atlassian: no egress, no credentials.</p>
+<div class="btn-row">
+<a class="btn" href="https://marketplace.atlassian.com/apps/LISTING-ID" rel="noopener noreferrer">Get it on Atlassian Marketplace</a>
+<a class="btn secondary" href="docs/quick-start.html">Quick start</a>
+<a class="btn secondary" href="docs/index.html">Read the docs</a>
+</div>
+<ul class="pills">
+<li>Free for up to 10 users</li>
+<li>30-day trial for larger sites</li>
+<li>Confluence Cloud</li>
+<li>Built on Atlassian Forge</li>
+</ul>
+</div>
+
+<section class="section" aria-label="Highlights">
+<ul class="cards three">
+<li class="card"><h3>Render any spec, right on the page</h3><p>Paste OpenAPI 3.1, 3.0 or Swagger 2.0 as YAML or JSON, or point the macro at a page attachment. Paths, schemas and security schemes appear inline.</p></li>
+<li class="card"><h3>Private repos without sharing a token</h3><p>Your CI uploads the spec as a page attachment with your own Confluence token. The app never sees your repository or stores a credential.</p></li>
+<li class="card"><h3>Runs on Atlassian, nothing leaves your site</h3><p>No external permissions, no egress, no analytics beacons. Data stays in Atlassian and follows your site&rsquo;s data residency.</p></li>
+</ul>
+</section>
+
+<div class="prose">
+<h2 id="show-your-spec">Show your OpenAPI or Swagger spec on a Confluence page, in one macro</h2>
+<p>OpenAPI Swagger Viewer for Confluence turns an OpenAPI 3.1, 3.0 or Swagger 2.0 file (YAML or JSON) into a readable, searchable API reference right on the page. Engineers read the real spec, not a screenshot, and the page cannot drift away from the file in your repository.</p>
+<p>Built on Atlassian Forge and designed to Run on Atlassian: no external servers, no external permissions, no credentials stored.</p>
+
+<h2 id="what-it-does">What it does</h2>
+<ul>
+<li>Renders paths, operations, parameters, request and response bodies, schemas and security schemes.</li>
+<li>Supports OpenAPI 3.1, 3.0.x and Swagger 2.0, in YAML or JSON.</li>
+<li>Shows a clear error with the line number when a spec is invalid, instead of a blank box.</li>
+<li>Free for sites up to 10 users, 30-day trial for larger sites, billed through Atlassian.</li>
+</ul>
+
+<h2 id="two-ways">Two ways to get your spec onto the page</h2>
+<ol>
+<li><strong>Paste.</strong> Paste the spec into the macro settings (up to about 150 KB). Good for small APIs and quick drafts.</li>
+<li><strong>Page attachment.</strong> Attach a <code>.yaml</code>, <code>.yml</code> or <code>.json</code> file to the page and pick it in the macro. Choose &ldquo;always latest&rdquo; so the page follows new versions, or pin a version for a released API. There is no app-imposed limit beyond your site&rsquo;s attachment size. <a href="docs/attachment-mode.html">Attachment mode guide</a>.</li>
+</ol>
+
+<h2 id="private-repos">Private repositories: let your CI push the spec</h2>
+<p>Most Confluence viewers need to log in to your repository, which means handing a token to a third party. We do the opposite. Your pipeline (GitHub Actions, GitLab CI, Bitbucket Pipelines or a plain curl command) uploads the spec as a page attachment using your own Confluence API token. The macro renders the newest version on the next page load.</p>
+<ul>
+<li>The app never connects to your repository.</li>
+<li>The app never sees or stores your token.</li>
+<li>One pipeline step, copy-paste snippets in the <a href="docs/ci-push.html">documentation</a>.</li>
+</ul>
+
+<h2 id="readers">Made for readers</h2>
+<ul>
+<li>Expand and collapse operations, filter by tag, search within the spec.</li>
+<li>Deep links to a single operation.</li>
+<li>Full-screen view for long specs.</li>
+<li>Fits the page width and height with no inner scrollbar or truncation.</li>
+<li>Follows the Confluence light and dark themes.</li>
+</ul>
+
+<h2 id="runs-on-atlassian">Runs on Atlassian</h2>
+<p>The app declares no external permissions and makes no outbound requests, so it qualifies for the Runs on Atlassian badge. Your spec is parsed and rendered in your own browser. It is never sent to us or to any third party. Macro settings and anonymous error counters live in Atlassian&rsquo;s Forge storage, which stays in your site&rsquo;s data-residency region. Uninstalling removes the app&rsquo;s data according to Atlassian&rsquo;s retention schedule. Details are in the <a href="privacy.html">Privacy Policy</a>.</p>
+
+<h2 id="does-not">What it does not do, and why</h2>
+<ul class="no-list">
+<li><strong>No &ldquo;Try it out&rdquo; button.</strong> Sending live requests from the page would require external permissions and would end the Runs on Atlassian guarantee. Test calls in Postman, curl or your gateway console.</li>
+<li><strong>No loading a spec from a URL or a repository.</strong> The same reason applies: it would mean outbound traffic. Use the <a href="docs/ci-push.html">CI push</a> instead, which also works for private repositories.</li>
+<li><strong>No spec editing.</strong> This is a viewer.</li>
+<li><strong>External <code>$ref</code> links to other files are not resolved yet.</strong> Bundle your spec into one file (for example with Redocly CLI). Resolving sibling attachments is planned as a fast follow.</li>
+<li><strong>Confluence Cloud only.</strong> Atlassian Forge does not exist for Data Center.</li>
+</ul>
+<p>If you need live calls or URL loading badly enough, tell us at <a href="mailto:support@[DOMAIN]">support@[DOMAIN]</a>. We only build a separate edition if enough customers ask.</p>
+
+<h2 id="pricing">Pricing</h2>
+<p><strong>Free for up to 10 users; paid tiers via Atlassian Marketplace.</strong></p>
+<ul>
+<li>Larger sites are priced per user tier. Current prices are on the Marketplace listing.</li>
+<li>30-day free trial.</li>
+<li>Billing, invoices and refunds are handled by Atlassian.</li>
+</ul>
+<p><a class="btn" href="https://marketplace.atlassian.com/apps/LISTING-ID" rel="noopener noreferrer">See pricing on Atlassian Marketplace</a></p>
+
+<h2 id="migrating">Moving from another Swagger or OpenAPI macro?</h2>
+<p>The documentation has a <a href="docs/migrating/index.html">migration guide</a> with a feature map for each app. Connect-based apps stop being supported by Atlassian on 31 January 2027.</p>
+
+<h2 id="support">Support</h2>
+<p>Email <a href="mailto:support@[DOMAIN]">support@[DOMAIN]</a>. No account or sign-up needed. First reply within one business day. See the <a href="support.html">support page</a> and the <a href="docs/index.html">documentation</a>.</p>
+</div>
+
+<div class="cta-band">
+<h2 id="get-started">Get started in five minutes</h2>
+<p>Install from the Marketplace, add the macro, paste a spec and publish.</p>
+<div class="btn-row">
+<a class="btn" href="https://marketplace.atlassian.com/apps/LISTING-ID" rel="noopener noreferrer">Get it on Atlassian Marketplace</a>
+<a class="btn secondary" href="docs/quick-start.html">Quick start guide</a>
+</div>
+</div>
+</div></main>
+<footer class="site-footer"><div class="wrap">
+<ul><li><a href="index.html">Home</a></li><li><a href="docs/index.html">Documentation</a></li><li><a href="privacy.html">Privacy Policy</a></li><li><a href="eula.html">End User License Agreement</a></li><li><a href="support.html">Support</a></li></ul>
+<p>Not affiliated with Atlassian; Atlassian, Confluence and Marketplace are trademarks of Atlassian Pty Ltd.</p>
+<p>Swagger is a trademark of SmartBear Software. This app is not affiliated with or endorsed by SmartBear.</p>
+<p>&copy; [VENDOR LEGAL NAME]</p>
+</div></footer>
+</body>
+</html>

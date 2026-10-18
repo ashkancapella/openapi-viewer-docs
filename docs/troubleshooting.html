@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Troubleshooting | OpenAPI Swagger Viewer for Confluence</title>
+<meta name="description" content="Fix parser errors, missing attachments, permission errors and slow rendering.">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../site.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header"><div class="wrap">
+<a class="brand" href="../index.html">OpenAPI Swagger Viewer for Confluence</a>
+<nav class="site-nav" aria-label="Main"><ul><li><a href="../docs/index.html" aria-current="page">Docs</a></li><li><a href="../docs/migrating/index.html">Migrating</a></li><li><a href="../privacy.html">Privacy</a></li><li><a href="../eula.html">EULA</a></li><li><a href="../support.html">Support</a></li></ul></nav>
+</div></header>
+<main id="main"><div class="wrap">
+<div class="prose">
+<nav aria-label="Breadcrumb" class="crumbs"><a href="../docs/index.html">Documentation</a> / <span aria-current="page">Troubleshooting</span></nav>
+<nav aria-label="Documentation"><ul class="docs-nav"><li><a href="../docs/index.html">Overview</a></li><li><a href="../docs/quick-start.html">Quick start</a></li><li><a href="../docs/attachment-mode.html">Attachment mode</a></li><li><a href="../docs/ci-push.html">CI push</a></li><li><a href="../docs/troubleshooting.html" aria-current="page">Troubleshooting</a></li><li><a href="../docs/faq.html">FAQ</a></li><li><a href="../docs/migrating/index.html">Migrating</a></li></ul></nav>
+<h1 id="troubleshooting">Troubleshooting</h1>
+<p>Find your symptom below. If none matches, see "How do I report a bug or ask for help?" in the <a href="faq.html">FAQ</a>.</p>
+<h2 id="the-macro-shows-a-parser-error-with-a-line-number">The macro shows a parser error with a line number</h2>
+<p>The message identifies the line and, usually, the column where the parser gave up, for example <code>YAMLException: bad indentation of a mapping entry (12:5)</code>. Open the file in an editor that shows line numbers and go to that spot. The most frequent causes:</p>
+<ul>
+<li><strong>Indentation.</strong> YAML uses spaces, never tabs. A key that is one space off is enough to break the document.</li>
+<li><strong>Unquoted special characters.</strong> A value containing <code>:</code> followed by a space, a leading <code>*</code>, <code>&amp;</code>, <code>@</code>, or <code>%</code> needs quotes. Version strings such as <code>1.0</code> may need quotes (<code>"1.0"</code>) if you want them kept as text.</li>
+<li><strong>Invalid JSON.</strong> Trailing commas, single quotes, and comments are not allowed in JSON.</li>
+<li><strong>Altered text.</strong> Smart quotes and non-breaking spaces can sneak in when copying from web pages or documents. Paste from the original file.</li>
+<li><strong>Wrong document.</strong> The root must contain <code>openapi: 3.x.x</code> or <code>swagger: "2.0"</code>.</li>
+</ul>
+<p>The line number refers to the text the macro received, so if you pasted it, count from the first pasted line.</p>
+<p>Tip: validate in your pipeline with <code>npx @redocly/cli lint openapi.yaml</code> before uploading.</p>
+<h2 id="no-attachment-found">"No attachment found"</h2>
+<p>The macro is set to attachment mode but cannot locate the file. Check each of these:</p>
+<ol>
+<li>The file is attached to <strong>this</strong> page. Other pages' attachments are not listed.</li>
+<li>The extension is <code>.yaml</code>, <code>.yml</code>, or <code>.json</code>.</li>
+<li>The file was not deleted or renamed after you selected it. Reselect it in the macro.</li>
+<li>For a <strong>pinned</strong> version, that version still exists. Deleting a version removes it. Switch to "Always latest" or pick another version.</li>
+</ol>
+<p>If you copied or moved the page, open the macro and choose the file again.</p>
+<h2 id="permission-errors">Permission errors</h2>
+<p>The macro reads the attachment with the viewer's own permissions. If someone sees an error where others see the spec:</p>
+<ul>
+<li>They need permission to <strong>view the page</strong>. Page restrictions apply to attachments, so a restricted page hides the spec from everyone not on the list.</li>
+<li>For uploads from CI, the account behind the token needs permission to add attachments to the page. See <a href="ci-push.html">CI push</a>.</li>
+</ul>
+<p>The fix is to grant access to the page, not to change the macro.</p>
+<h2 id="the-macro-does-not-render-in-a-template-or-an-unpublished-draft">The macro does not render in a template or an unpublished draft</h2>
+<ul>
+<li><strong>Page templates:</strong> a template is not a real page, so it has no attachments to read. Attachment mode cannot work there. Use paste mode in templates, or tell authors to select the attachment after they create a page from the template.</li>
+<li><strong>Unpublished drafts:</strong> the preview can be limited until the page has been published at least once. If the editor shows nothing, publish the page (you can restrict it to yourself first), then check again.</li>
+</ul>
+<h2 id="the-spec-updated-in-confluence-but-readers-see-the-old-version">The spec updated in Confluence but readers see the old version</h2>
+<ul>
+<li>Reload the page. The macro reads the file when the page loads.</li>
+<li>Check the macro is on "Always latest" and not pinned.</li>
+<li>Check that the upload used the <strong>same file name</strong>. A different name creates a second attachment, and the macro keeps showing the first.</li>
+</ul>
+<h2 id="rendering-is-slow-or-the-page-freezes">Rendering is slow or the page freezes</h2>
+<p>Very large specs (many thousands of operations, or megabytes of schemas) are heavy to display in a browser.</p>
+<ol>
+<li>Keep operations collapsed, and use tag filtering and search rather than expanding everything.</li>
+<li>Split the API into one spec and one page per service or domain.</li>
+<li>Remove unused schemas and very large inline examples before upload. Embedded base64 files in examples are a frequent cause of multi-megabyte specs.</li>
+</ol>
+<p>If a spec under a few MB is still slow, send it to support (a trimmed copy is fine) and we will investigate.</p>
+<nav class="pager" aria-label="Previous and next page"><span>&larr; <a href="ci-push.html">Previous: CI push</a></span><span><a href="faq.html">Next: FAQ</a> &rarr;</span></nav>
+</div>
+</div></main>
+<footer class="site-footer"><div class="wrap">
+<ul><li><a href="../index.html">Home</a></li><li><a href="../docs/index.html">Documentation</a></li><li><a href="../privacy.html">Privacy Policy</a></li><li><a href="../eula.html">End User License Agreement</a></li><li><a href="../support.html">Support</a></li></ul>
+<p>Not affiliated with Atlassian; Atlassian, Confluence and Marketplace are trademarks of Atlassian Pty Ltd.</p>
+<p>Swagger is a trademark of SmartBear Software. This app is not affiliated with or endorsed by SmartBear.</p>
+<p>&copy; [VENDOR LEGAL NAME]</p>
+</div></footer>
+</body>
+</html>
