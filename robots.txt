@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://ashkancapella.github.io/openapi-viewer-docs/sitemap.xml
+Sitemap: https://capella.business/sitemap.xml
